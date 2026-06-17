@@ -1,0 +1,38 @@
+[
+  {
+    "id": "1",
+    "name": "Python",
+    "category": "Languages",
+    "level": 90,
+    "icon": "python",
+    "description": "Used for AI/ML and backend development.",
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "2",
+    "name": "React",
+    "category": "Frontend",
+    "level": 85,
+    "icon": "react",
+    "description": "Building interactive web applications.",
+    "createdAt": "2026-01-02T00:00:00Z"
+  },
+  {
+    "id": "3",
+    "name": "Machine Learning",
+    "category": "AI/ML",
+    "level": 80,
+    "icon": "brain",
+    "description": "Developing predictive models and neural networks.",
+    "createdAt": "2026-01-03T00:00:00Z"
+  },
+  {
+    "id": "4",
+    "name": "Unity",
+    "category": "AR/VR",
+    "level": 75,
+    "icon": "unity",
+    "description": "Creating augmented reality experiences.",
+    "createdAt": "2026-01-04T00:00:00Z"
+  }
+]

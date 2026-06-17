@@ -1,0 +1,67 @@
+[
+  {
+    "id": "home",
+    "name": "Home",
+    "href": "#home",
+    "enabled": true,
+    "custom": false,
+    "content": ""
+  },
+  {
+    "id": "about",
+    "name": "About",
+    "href": "#about",
+    "enabled": true,
+    "custom": false,
+    "content": ""
+  },
+  {
+    "id": "skills",
+    "name": "Skills",
+    "href": "#skills",
+    "enabled": true,
+    "custom": false,
+    "content": ""
+  },
+  {
+    "id": "projects",
+    "name": "Projects",
+    "href": "#projects",
+    "enabled": true,
+    "custom": false,
+    "content": ""
+  },
+  {
+    "id": "education",
+    "name": "Education",
+    "href": "#education",
+    "enabled": true,
+    "custom": false,
+    "content": ""
+  },
+  {
+    "id": "achievements",
+    "name": "Achievements",
+    "href": "#achievements",
+    "enabled": true,
+    "custom": true,
+    "content": "",
+    "updatedAt": "2026-06-16T17:27:42.861Z"
+  },
+  {
+    "id": "certifications",
+    "name": "Certifications",
+    "href": "#certifications",
+    "enabled": false,
+    "custom": false,
+    "content": ""
+  },
+  {
+    "id": "contact",
+    "name": "Contact",
+    "href": "#contact",
+    "enabled": true,
+    "custom": false,
+    "content": ""
+  }
+]

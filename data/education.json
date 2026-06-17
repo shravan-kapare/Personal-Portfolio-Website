@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1",
+    "degree": "B.Tech in Computer Science & Engineering",
+    "institution": "Tatyasaheb Kore Institute of Engineering and Technology, Warananagar",
+    "timeline": "2023 - 2027",
+    "coursework": [
+      "Data Structures",
+      "Algorithms",
+      "Machine Learning",
+      "Cloud Computing"
+    ],
+    "createdAt": "2026-01-01T00:00:00Z",
+    "updatedAt": "2026-06-07T14:26:37.636Z"
+  }
+]

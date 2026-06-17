@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "title": "Hackathon Winner",
+    "description": "First place at National Tech Symposium for IoT innovation.",
+    "date": "2025-05-15",
+    "category": "Competition",
+    "createdAt": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "2",
+    "title": "Tech Speaker",
+    "description": "Presented AR applications at University Tech Fest.",
+    "date": "2024-11-20",
+    "category": "Speaking",
+    "createdAt": "2026-01-02T00:00:00Z"
+  },
+  {
+    "title": "Medals",
+    "category": "extra curricular",
+    "date": "2023-05-17",
+    "description": "Gold medal in maths olympiad\n",
+    "id": "f5d477e1-8a63-4532-862e-25bcb7223474",
+    "createdAt": "2026-06-16T17:26:00.663Z"
+  }
+]
