@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Text, Line, Points, PointMaterial, Billboard, Html } from "@react-three/drei";
 import * as THREE from "three";
@@ -373,6 +373,116 @@ function PulsingCore({ isExpanded, onClick }: { isExpanded: boolean; onClick: ()
 }
 
 /**
+ * Smart Tooltip component rendered inside Drei's <Html center> on desktop.
+ * Detects viewport and container collisions and aligns itself to the side with
+ * the most space, prioritizing: Right, Left, Top, Bottom.
+ */
+function SmartTooltip({ skill }: { skill: Skill }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [side, setSide] = useState<'top' | 'bottom' | 'left' | 'right'>('top');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // Small timeout to allow the browser to complete layout and populate bounding client rects
+    const timer = setTimeout(() => {
+      if (!ref.current) return;
+      
+      const rect = ref.current.getBoundingClientRect();
+      const container = document.getElementById("skill-galaxy-container");
+      const containerRect = container 
+        ? container.getBoundingClientRect() 
+        : { left: 0, right: window.innerWidth, top: 0, bottom: window.innerHeight };
+      
+      // Node position is at the center of the Html element's bounding rect
+      const nodeX = rect.left + rect.width / 2;
+      const nodeY = rect.top + rect.height / 2;
+      const w = rect.width;
+      const h = rect.height;
+
+      // Available space around the node center inside viewport and container boundaries
+      const spaceRight = Math.min(containerRect.right, window.innerWidth) - nodeX;
+      const spaceLeft = nodeX - Math.max(containerRect.left, 0);
+      const spaceTop = nodeY - Math.max(containerRect.top, 0);
+      const spaceBottom = Math.min(containerRect.bottom, window.innerHeight) - nodeY;
+
+      const margin = 20;
+      let chosenSide: 'top' | 'bottom' | 'left' | 'right' = 'top';
+
+      // Detect if node center is too close to container or viewport boundaries
+      const nearLeft = nodeX - containerRect.left < w + margin;
+      const nearRight = containerRect.right - nodeX < w + margin;
+      const nearTop = nodeY - containerRect.top < h + margin;
+      const nearBottom = containerRect.bottom - nodeY < h + margin;
+
+      if (nearLeft && spaceRight >= w) {
+        chosenSide = 'right';
+      } else if (nearRight && spaceLeft >= w) {
+        chosenSide = 'left';
+      } else if (nearTop && spaceBottom >= h) {
+        chosenSide = 'bottom';
+      } else if (nearBottom && spaceTop >= h) {
+        chosenSide = 'top';
+      } else {
+        // Fallback priority: Right, Left, Top, Bottom based on space
+        if (spaceRight >= w + margin) {
+          chosenSide = 'right';
+        } else if (spaceLeft >= w + margin) {
+          chosenSide = 'left';
+        } else if (spaceTop >= h + margin) {
+          chosenSide = 'top';
+        } else if (spaceBottom >= h + margin) {
+          chosenSide = 'bottom';
+        } else {
+          // Absolute fallback: side with maximum space
+          const maxSpace = Math.max(spaceRight, spaceLeft, spaceTop, spaceBottom);
+          if (maxSpace === spaceRight) chosenSide = 'right';
+          else if (maxSpace === spaceLeft) chosenSide = 'left';
+          else if (maxSpace === spaceTop) chosenSide = 'top';
+          else chosenSide = 'bottom';
+        }
+      }
+
+      setSide(chosenSide);
+      setMounted(true);
+    }, 40);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const transforms = {
+    top: 'translate(-50%, calc(-100% - 16px))',
+    bottom: 'translate(-50%, 16px)',
+    left: 'translate(calc(-100% - 16px), -50%)',
+    right: 'translate(16px, -50%)'
+  };
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        position: 'absolute',
+        transform: transforms[side],
+        opacity: mounted ? 1 : 0,
+        transition: 'opacity 0.2s ease-out, transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1)',
+        pointerEvents: 'none',
+        maxWidth: '280px',
+        width: 'max-content'
+      }}
+      className="bg-black/90 backdrop-blur-md border border-purple-500/30 p-4 rounded-xl text-white shadow-2xl shadow-purple-500/20"
+    >
+      <div className="text-xs text-purple-400 font-mono uppercase tracking-wider mb-1">{skill.category}</div>
+      <div className="font-bold text-lg mb-1 leading-tight">{skill.name}</div>
+      <div className="w-full bg-white/10 h-1.5 rounded-full mb-3 overflow-hidden">
+        <div className="h-full bg-gradient-to-r from-cyan-400 to-purple-500" style={{ width: `${skill.level}%` }} />
+      </div>
+      {skill.description && (
+        <p className="text-xs text-gray-400 leading-normal break-words whitespace-pre-wrap">{skill.description}</p>
+      )}
+    </div>
+  );
+}
+
+/**
  * A single orbiting node that represents a skill.
  * Expands radius when galaxy is expanded. Glows on hover.
  */
@@ -380,12 +490,16 @@ function SkillNode({
   skill, 
   basePosition, 
   isExpanded,
-  index
+  index,
+  setHoveredSkill,
+  isMobile
 }: { 
   skill: Skill; 
   basePosition: THREE.Vector3; 
   isExpanded: boolean;
   index: number;
+  setHoveredSkill: (skill: Skill | null) => void;
+  isMobile: boolean;
 }) {
   const [hovered, setHovered] = useState(false);
   const meshRef = useRef<THREE.Mesh>(null);
@@ -426,8 +540,18 @@ function SkillNode({
       <group ref={groupRef}>
         <mesh 
           ref={meshRef}
-          onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = 'pointer'; }}
-          onPointerOut={(e) => { e.stopPropagation(); setHovered(false); document.body.style.cursor = 'auto'; }}
+          onPointerOver={(e) => { 
+            e.stopPropagation(); 
+            setHovered(true); 
+            document.body.style.cursor = 'pointer'; 
+            setHoveredSkill(skill);
+          }}
+          onPointerOut={(e) => { 
+            e.stopPropagation(); 
+            setHovered(false); 
+            document.body.style.cursor = 'auto'; 
+            setHoveredSkill(null);
+          }}
         >
           <sphereGeometry args={[0.2, 16, 16]} />
           {/* Node color based on hover state */}
@@ -448,19 +572,10 @@ function SkillNode({
           </Text>
         </Billboard>
 
-        {/* Hover Tooltip Overlay */}
-        {hovered && (
+        {/* Hover Tooltip Overlay (Desktop viewport-aware only) */}
+        {hovered && !isMobile && (
           <Html position={[0, 0.5, 0]} center zIndexRange={[100, 0]} style={{ pointerEvents: 'none' }}>
-            <div className="bg-black/80 backdrop-blur-md border border-purple-500/30 p-4 rounded-xl text-white shadow-2xl shadow-purple-500/20 w-48 animate-in fade-in zoom-in duration-200">
-              <div className="text-xs text-purple-400 font-mono uppercase tracking-wider mb-1">{skill.category}</div>
-              <div className="font-bold text-lg mb-1 leading-tight">{skill.name}</div>
-              <div className="w-full bg-white/10 h-1.5 rounded-full mb-3 overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-cyan-400 to-purple-500" style={{ width: `${skill.level}%` }} />
-              </div>
-              {skill.description && (
-                <p className="text-xs text-gray-400 line-clamp-3">{skill.description}</p>
-              )}
-            </div>
+            <SmartTooltip skill={skill} />
           </Html>
         )}
       </group>
@@ -477,7 +592,15 @@ function SkillNode({
 /**
  * Main Interactive Galaxy
  */
-function GalaxyNetwork({ skills }: { skills: Skill[] }) {
+function GalaxyNetwork({ 
+  skills, 
+  setHoveredSkill,
+  isMobile 
+}: { 
+  skills: Skill[]; 
+  setHoveredSkill: (skill: Skill | null) => void;
+  isMobile: boolean;
+}) {
   const groupRef = useRef<THREE.Group>(null);
   const { mouse } = useThree();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -552,6 +675,8 @@ function GalaxyNetwork({ skills }: { skills: Skill[] }) {
               basePosition={node.basePos} 
               isExpanded={isExpanded} 
               index={i}
+              setHoveredSkill={setHoveredSkill}
+              isMobile={isMobile}
             />
             {/* We will draw the static connection line. 
                 Instead of static, we'll wrap it in a component to animate it. */}
@@ -646,6 +771,18 @@ function InterNodeLine({ posA, posB, isExpanded }: { posA: THREE.Vector3, posB: 
 
 
 export default function SkillGalaxy({ skills = [] }: SkillGalaxyProps) {
+  const [hoveredSkill, setHoveredSkill] = useState<Skill | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   if (!skills || skills.length === 0) {
     return (
       <div className="w-full h-full flex items-center justify-center border border-white/10 rounded-3xl bg-white/5">
@@ -655,7 +792,7 @@ export default function SkillGalaxy({ skills = [] }: SkillGalaxyProps) {
   }
 
   return (
-    <div className="w-full h-full min-h-[500px] relative rounded-3xl overflow-hidden">
+    <div id="skill-galaxy-container" className="w-full h-full min-h-[500px] relative rounded-3xl overflow-hidden">
       <Canvas 
         camera={{ position: [0, 0, 9], fov: 60 }} 
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
@@ -663,9 +800,23 @@ export default function SkillGalaxy({ skills = [] }: SkillGalaxyProps) {
       >
         <ambientLight intensity={1} />
         
-        <GalaxyNetwork skills={skills} />
+        <GalaxyNetwork skills={skills} setHoveredSkill={setHoveredSkill} isMobile={isMobile} />
         <EnergyParticles count={150} />
       </Canvas>
+
+      {/* Floating Card Overlay (Mobile only, kept fully visible in viewport) */}
+      {hoveredSkill && isMobile && (
+        <div className="absolute bottom-4 left-4 right-4 z-50 bg-black/90 backdrop-blur-md border border-purple-500/30 p-4 rounded-xl text-white shadow-2xl shadow-purple-500/20 animate-in fade-in slide-in-from-bottom duration-200 pointer-events-none">
+          <div className="text-xs text-purple-400 font-mono uppercase tracking-wider mb-1">{hoveredSkill.category}</div>
+          <div className="font-bold text-lg mb-1 leading-tight">{hoveredSkill.name}</div>
+          <div className="w-full bg-white/10 h-1.5 rounded-full mb-3 overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-cyan-400 to-purple-500" style={{ width: `${hoveredSkill.level}%` }} />
+          </div>
+          {hoveredSkill.description && (
+            <p className="text-xs text-gray-400 leading-normal break-words whitespace-pre-wrap">{hoveredSkill.description}</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

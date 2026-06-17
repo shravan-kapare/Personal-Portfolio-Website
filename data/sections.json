@@ -5,6 +5,7 @@
     "href": "#home",
     "enabled": true,
     "custom": false,
+    "navVisible": true,
     "content": ""
   },
   {
@@ -13,6 +14,7 @@
     "href": "#about",
     "enabled": true,
     "custom": false,
+    "navVisible": true,
     "content": ""
   },
   {
@@ -21,6 +23,7 @@
     "href": "#skills",
     "enabled": true,
     "custom": false,
+    "navVisible": true,
     "content": ""
   },
   {
@@ -29,6 +32,7 @@
     "href": "#projects",
     "enabled": true,
     "custom": false,
+    "navVisible": true,
     "content": ""
   },
   {
@@ -37,6 +41,7 @@
     "href": "#education",
     "enabled": true,
     "custom": false,
+    "navVisible": true,
     "content": ""
   },
   {
@@ -44,16 +49,8 @@
     "name": "Achievements",
     "href": "#achievements",
     "enabled": true,
-    "custom": true,
-    "content": "",
-    "updatedAt": "2026-06-16T17:27:42.861Z"
-  },
-  {
-    "id": "certifications",
-    "name": "Certifications",
-    "href": "#certifications",
-    "enabled": false,
     "custom": false,
+    "navVisible": true,
     "content": ""
   },
   {
@@ -62,6 +59,34 @@
     "href": "#contact",
     "enabled": true,
     "custom": false,
+    "navVisible": true,
+    "content": ""
+  },
+  {
+    "id": "evolution",
+    "name": "Knowledge Evolution",
+    "href": "#evolution",
+    "enabled": true,
+    "custom": true,
+    "navVisible": false,
+    "content": ""
+  },
+  {
+    "id": "developer-presence",
+    "name": "Developer Presence",
+    "href": "#developer-presence",
+    "enabled": false,
+    "custom": true,
+    "navVisible": false,
+    "content": ""
+  },
+  {
+    "id": "github",
+    "name": "Open Source Core",
+    "href": "#github",
+    "enabled": true,
+    "custom": true,
+    "navVisible": false,
     "content": ""
   }
 ]
