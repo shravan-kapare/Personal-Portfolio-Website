@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Text, Line, Sphere, Points, PointMaterial, Billboard, Torus, Html } from "@react-three/drei";
+import { Text, Line, Points, PointMaterial, Billboard, Html } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 
@@ -59,72 +59,246 @@ function EnergyParticles({ count = 150 }: { count?: number }) {
   );
 }
 
-/**
- * Animated Cosmic Energy Core (Interactive)
- */
-function PulsingCore({ isExpanded, onClick }: { isExpanded: boolean; onClick: () => void }) {
-  const coreRef = useRef<THREE.Group>(null);
-  const ring1Ref = useRef<THREE.Mesh>(null);
-  const ring2Ref = useRef<THREE.Mesh>(null);
-  const ring3Ref = useRef<THREE.Mesh>(null);
+/* ════════════════════════════════════════════════════════════
+ * GLSL 3-D Simplex Noise  (Ashima Arts / Stefan Gustavson)
+ * ════════════════════════════════════════════════════════════ */
+const glslNoise = /* glsl */ `
+vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}
+vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}
+vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}
+vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}
+float snoise(vec3 v){
+  const vec2 C=vec2(1.0/6.0,1.0/3.0);const vec4 D=vec4(0.0,0.5,1.0,2.0);
+  vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);
+  vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.0-g;
+  vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);
+  vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;
+  i=mod289(i);
+  vec4 p=permute(permute(permute(
+    i.z+vec4(0.0,i1.z,i2.z,1.0))
+    +i.y+vec4(0.0,i1.y,i2.y,1.0))
+    +i.x+vec4(0.0,i1.x,i2.x,1.0));
+  float n_=0.142857142857;vec3 ns=n_*D.wyz-D.xzx;
+  vec4 j=p-49.0*floor(p*ns.z*ns.z);
+  vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.0*x_);
+  vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;
+  vec4 h=1.0-abs(x)-abs(y);
+  vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);
+  vec4 s0=floor(b0)*2.0+1.0;vec4 s1=floor(b1)*2.0+1.0;
+  vec4 sh=-step(h,vec4(0.0));
+  vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
+  vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);
+  vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);
+  vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));
+  p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;
+  vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0);
+  m=m*m;
+  return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
+}`;
 
-  useFrame((state, delta) => {
+/* ── Core plasma surface: vertex shader ── */
+const coreVertexShader = /* glsl */ `
+uniform float uTime;
+varying vec3 vNormal;
+varying vec3 vPosition;
+varying vec3 vViewDir;
+${glslNoise}
+void main(){
+  vNormal  = normalize(normalMatrix * normal);
+  vPosition = position;
+  float d  = snoise(position * 2.5 + uTime * 0.3) * 0.07
+           + snoise(position * 5.0 + uTime * 0.5) * 0.035;
+  vec3 pos = position + normal * d;
+  vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);
+  vViewDir = normalize(-mvPos.xyz);
+  gl_Position = projectionMatrix * mvPos;
+}`;
+
+/* ── Core plasma surface: fragment shader ── */
+const coreFragmentShader = /* glsl */ `
+uniform float uTime;
+varying vec3 vNormal;
+varying vec3 vPosition;
+varying vec3 vViewDir;
+${glslNoise}
+void main(){
+  float n1 = snoise(vPosition * 3.0 + uTime * 0.2);
+  float n2 = snoise(vPosition * 6.0 - uTime * 0.3);
+  float n3 = snoise(vPosition * 1.5 + uTime * 0.15);
+  float veins = pow(abs(sin(n1 * 8.0 + uTime * 0.8)), 4.0);
+  vec3 white  = vec3(0.95, 0.98, 1.0);
+  vec3 cyan   = vec3(0.024, 0.714, 0.831);
+  vec3 purple = vec3(0.659, 0.333, 0.969);
+  vec3 blue   = vec3(0.231, 0.510, 0.961);
+  vec3 col = mix(white, cyan, smoothstep(-0.2, 0.6, n1));
+  col = mix(col, purple, smoothstep(0.1, 0.8, n2) * 0.4);
+  col = mix(col, blue,   smoothstep(0.0, 0.7, n3) * 0.3);
+  col += veins * cyan * 0.5;
+  float fresnel = pow(1.0 - max(dot(vNormal, vViewDir), 0.0), 2.5);
+  col += fresnel * mix(purple, cyan, sin(uTime * 0.5) * 0.5 + 0.5) * 1.0;
+  col *= sin(uTime * 2.0) * 0.08 + 1.0;
+  col *= 1.6;
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
+/* ── Outer plasma shell: vertex shader ── */
+const shellVertexShader = /* glsl */ `
+varying vec3 vNormal;
+varying vec3 vPosition;
+varying vec3 vViewDir;
+void main(){
+  vNormal   = normalize(normalMatrix * normal);
+  vPosition = position;
+  vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+  vViewDir  = normalize(-mvPos.xyz);
+  gl_Position = projectionMatrix * mvPos;
+}`;
+
+/* ── Outer plasma shell: fragment shader ── */
+const shellFragmentShader = /* glsl */ `
+uniform float uTime;
+varying vec3 vNormal;
+varying vec3 vPosition;
+varying vec3 vViewDir;
+${glslNoise}
+void main(){
+  float n = snoise(vPosition * 2.0 + uTime * 0.2);
+  float fresnel = pow(1.0 - max(dot(vNormal, vViewDir), 0.0), 1.8);
+  vec3 cyan   = vec3(0.024, 0.714, 0.831);
+  vec3 purple = vec3(0.659, 0.333, 0.969);
+  vec3 col = mix(cyan, purple, n * 0.5 + 0.5) * 2.0;
+  float alpha = fresnel * (0.25 + n * 0.12);
+  alpha *= sin(uTime * 1.5) * 0.08 + 0.92;
+  gl_FragColor = vec4(col, alpha);
+}`;
+
+/**
+ * Orbiting energy particles that swirl around the cosmic core
+ */
+function CoreOrbitingParticles({ count = 35 }: { count?: number }) {
+  const ref = useRef<THREE.Points>(null);
+
+  const particleData = useMemo(
+    () =>
+      Array.from({ length: count }, () => ({
+        radius: 0.7 + Math.random() * 0.7,
+        speed: 0.15 + Math.random() * 0.6,
+        offset: Math.random() * Math.PI * 2,
+        tilt: (Math.random() - 0.5) * Math.PI,
+      })),
+    [count],
+  );
+
+  const positions = useMemo(() => {
+    const arr = new Float32Array(count * 3);
+    particleData.forEach((p, i) => {
+      arr[i * 3] = Math.cos(p.offset) * p.radius;
+      arr[i * 3 + 1] = Math.sin(p.offset) * p.radius * Math.sin(p.tilt);
+      arr[i * 3 + 2] = Math.sin(p.offset) * p.radius * Math.cos(p.tilt);
+    });
+    return arr;
+  }, [count, particleData]);
+
+  useFrame((state) => {
     const t = state.clock.elapsedTime;
-    if (coreRef.current) {
-      // Pulse scale
-      const baseScale = isExpanded ? 1.2 : 1.0;
-      const pulse = Math.sin(t * 3) * 0.05;
-      const targetScale = baseScale + pulse;
-      coreRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
-    }
-    // Rotate rings
-    if (ring1Ref.current) {
-      ring1Ref.current.rotation.x += delta * 0.5;
-      ring1Ref.current.rotation.y += delta * 0.2;
-    }
-    if (ring2Ref.current) {
-      ring2Ref.current.rotation.y += delta * 0.3;
-      ring2Ref.current.rotation.z += delta * 0.4;
-    }
-    if (ring3Ref.current) {
-      ring3Ref.current.rotation.x -= delta * 0.2;
-      ring3Ref.current.rotation.z -= delta * 0.5;
+    particleData.forEach((p, i) => {
+      const angle = t * p.speed + p.offset;
+      positions[i * 3] = Math.cos(angle) * p.radius;
+      positions[i * 3 + 1] = Math.sin(angle) * p.radius * Math.sin(p.tilt);
+      positions[i * 3 + 2] = Math.sin(angle) * p.radius * Math.cos(p.tilt);
+    });
+    if (ref.current) {
+      ref.current.geometry.attributes.position.needsUpdate = true;
     }
   });
 
   return (
-    <group 
+    <Points ref={ref} positions={positions} stride={3}>
+      <PointMaterial
+        transparent
+        color="#06b6d4"
+        size={0.05}
+        sizeAttenuation
+        depthWrite={false}
+        opacity={0.9}
+        blending={THREE.AdditiveBlending}
+      />
+    </Points>
+  );
+}
+
+/**
+ * Animated Cosmic Energy Core — a living miniature star.
+ * Custom GLSL shaders produce noise-displaced plasma surface,
+ * energy veins, fresnel edge glow, and breathing pulse.
+ */
+function PulsingCore({ isExpanded, onClick }: { isExpanded: boolean; onClick: () => void }) {
+  const coreRef = useRef<THREE.Group>(null);
+  const coreMtlRef = useRef<THREE.ShaderMaterial>(null);
+  const shellMtlRef = useRef<THREE.ShaderMaterial>(null);
+
+  const coreUniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
+  const shellUniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    if (coreMtlRef.current) coreMtlRef.current.uniforms.uTime.value = t;
+    if (shellMtlRef.current) shellMtlRef.current.uniforms.uTime.value = t;
+    if (coreRef.current) {
+      const base = isExpanded ? 1.15 : 1.0;
+      const pulse = Math.sin(t * 2.0) * 0.04;
+      const s = base + pulse;
+      coreRef.current.scale.lerp(new THREE.Vector3(s, s, s), 0.08);
+      coreRef.current.rotation.y += 0.002;
+    }
+  });
+
+  return (
+    <group
       onClick={(e) => { e.stopPropagation(); onClick(); }}
-      onPointerOver={() => document.body.style.cursor = 'pointer'}
-      onPointerOut={() => document.body.style.cursor = 'auto'}
+      onPointerOver={() => (document.body.style.cursor = "pointer")}
+      onPointerOut={() => (document.body.style.cursor = "auto")}
     >
       <group ref={coreRef}>
-        {/* Core Singularity */}
-        <Sphere args={[0.5, 32, 32]}>
-          <meshBasicMaterial color="#ffffff" />
-        </Sphere>
-        {/* Plasma Shells */}
-        <Sphere args={[0.7, 32, 32]}>
-          <meshBasicMaterial color="#06b6d4" transparent opacity={0.7} blending={THREE.AdditiveBlending} />
-        </Sphere>
-        <Sphere args={[0.9, 32, 32]}>
-          <meshBasicMaterial color="#a855f7" transparent opacity={0.4} blending={THREE.AdditiveBlending} />
-        </Sphere>
-        <Sphere args={[1.1, 32, 32]}>
-          <meshBasicMaterial color="#3b82f6" transparent opacity={0.2} blending={THREE.AdditiveBlending} />
-        </Sphere>
+        {/* ── Inner Plasma Core (custom shader) ── */}
+        <mesh>
+          <sphereGeometry args={[0.55, 64, 64]} />
+          <shaderMaterial
+            ref={coreMtlRef}
+            vertexShader={coreVertexShader}
+            fragmentShader={coreFragmentShader}
+            uniforms={coreUniforms}
+          />
+        </mesh>
+
+        {/* ── Outer Plasma Shell (fresnel glow shader) ── */}
+        <mesh>
+          <sphereGeometry args={[0.85, 48, 48]} />
+          <shaderMaterial
+            ref={shellMtlRef}
+            vertexShader={shellVertexShader}
+            fragmentShader={shellFragmentShader}
+            uniforms={shellUniforms}
+            transparent
+            depthWrite={false}
+            blending={THREE.AdditiveBlending}
+            side={THREE.FrontSide}
+          />
+        </mesh>
+
+        {/* ── Volumetric Glow Layers ── */}
+        <mesh>
+          <sphereGeometry args={[1.1, 32, 32]} />
+          <meshBasicMaterial color="#a855f7" transparent opacity={0.12} depthWrite={false} blending={THREE.AdditiveBlending} />
+        </mesh>
+        <mesh>
+          <sphereGeometry args={[1.4, 32, 32]} />
+          <meshBasicMaterial color="#3b82f6" transparent opacity={0.06} depthWrite={false} blending={THREE.AdditiveBlending} />
+        </mesh>
+
+        {/* ── Orbiting Energy Particles ── */}
+        <CoreOrbitingParticles count={35} />
       </group>
-      
-      {/* Containment Rings */}
-      <Torus ref={ring1Ref} args={[1.3, 0.02, 16, 100]}>
-        <meshBasicMaterial color="#06b6d4" transparent opacity={0.8} blending={THREE.AdditiveBlending} />
-      </Torus>
-      <Torus ref={ring2Ref} args={[1.5, 0.015, 16, 100]} rotation={[Math.PI/4, 0, 0]}>
-        <meshBasicMaterial color="#a855f7" transparent opacity={0.6} blending={THREE.AdditiveBlending} />
-      </Torus>
-      <Torus ref={ring3Ref} args={[1.7, 0.01, 16, 100]} rotation={[0, Math.PI/3, 0]}>
-        <meshBasicMaterial color="#3b82f6" transparent opacity={0.5} blending={THREE.AdditiveBlending} />
-      </Torus>
     </group>
   );
 }
