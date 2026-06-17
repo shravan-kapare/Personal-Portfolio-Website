@@ -122,10 +122,10 @@ varying vec3 vPosition;
 varying vec3 vViewDir;
 ${glslNoise}
 void main(){
-  float n1 = snoise(vPosition * 3.0 + uTime * 0.2);
-  float n2 = snoise(vPosition * 6.0 - uTime * 0.3);
-  float n3 = snoise(vPosition * 1.5 + uTime * 0.15);
-  float veins = pow(abs(sin(n1 * 8.0 + uTime * 0.8)), 4.0);
+  float n1 = snoise(vPosition * 3.0 + uTime * 0.15);
+  float n2 = snoise(vPosition * 6.0 - uTime * 0.2);
+  float n3 = snoise(vPosition * 1.5 + uTime * 0.1);
+  float veins = pow(abs(sin(n1 * 4.0 + uTime * 0.25)), 4.0);
   vec3 white  = vec3(0.95, 0.98, 1.0);
   vec3 cyan   = vec3(0.024, 0.714, 0.831);
   vec3 purple = vec3(0.659, 0.333, 0.969);
@@ -133,11 +133,11 @@ void main(){
   vec3 col = mix(white, cyan, smoothstep(-0.2, 0.6, n1));
   col = mix(col, purple, smoothstep(0.1, 0.8, n2) * 0.4);
   col = mix(col, blue,   smoothstep(0.0, 0.7, n3) * 0.3);
-  col += veins * cyan * 0.5;
+  col += veins * cyan * 0.4;
   float fresnel = pow(1.0 - max(dot(vNormal, vViewDir), 0.0), 2.5);
-  col += fresnel * mix(purple, cyan, sin(uTime * 0.5) * 0.5 + 0.5) * 1.0;
-  col *= sin(uTime * 2.0) * 0.08 + 1.0;
-  col *= 1.6;
+  col += fresnel * mix(purple, cyan, sin(uTime * 0.4) * 0.5 + 0.5) * 0.8;
+  col *= sin(uTime * 1.0) * 0.03 + 0.97;
+  col *= 1.5;
   gl_FragColor = vec4(col, 1.0);
 }`;
 
@@ -162,13 +162,13 @@ varying vec3 vPosition;
 varying vec3 vViewDir;
 ${glslNoise}
 void main(){
-  float n = snoise(vPosition * 2.0 + uTime * 0.2);
+  float n = snoise(vPosition * 2.0 + uTime * 0.15);
   float fresnel = pow(1.0 - max(dot(vNormal, vViewDir), 0.0), 1.8);
   vec3 cyan   = vec3(0.024, 0.714, 0.831);
   vec3 purple = vec3(0.659, 0.333, 0.969);
-  vec3 col = mix(cyan, purple, n * 0.5 + 0.5) * 2.0;
-  float alpha = fresnel * (0.25 + n * 0.12);
-  alpha *= sin(uTime * 1.5) * 0.08 + 0.92;
+  vec3 col = mix(cyan, purple, n * 0.5 + 0.5) * 1.8;
+  float alpha = fresnel * (0.22 + n * 0.1);
+  alpha *= sin(uTime * 0.8) * 0.04 + 0.96;
   gl_FragColor = vec4(col, alpha);
 }`;
 
@@ -228,6 +228,61 @@ function CoreOrbitingParticles({ count = 35 }: { count?: number }) {
 }
 
 /**
+ * Elegant cosmic dust/energy ring rotating around the core
+ */
+function CosmicDustRing({ 
+  radius, 
+  count = 45, 
+  speed = 0.12, 
+  color = "#06b6d4", 
+  tiltX = 0,
+  tiltZ = 0
+}: { 
+  radius: number; 
+  count?: number; 
+  speed?: number; 
+  color?: string; 
+  tiltX?: number;
+  tiltZ?: number;
+}) {
+  const ref = useRef<THREE.Points>(null);
+
+  const positions = useMemo(() => {
+    const arr = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.05;
+      arr[i * 3] = Math.cos(angle) * radius;
+      arr[i * 3 + 1] = (Math.random() - 0.5) * 0.03; // very narrow height spread
+      arr[i * 3 + 2] = Math.sin(angle) * radius;
+    }
+    return arr;
+  }, [count, radius]);
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    if (ref.current) {
+      ref.current.rotation.y = t * speed;
+    }
+  });
+
+  return (
+    <group rotation={[tiltX, 0, tiltZ]}>
+      <Points ref={ref} positions={positions} stride={3}>
+        <PointMaterial
+          transparent
+          color={color}
+          size={0.035}
+          sizeAttenuation
+          depthWrite={false}
+          opacity={0.55}
+          blending={THREE.AdditiveBlending}
+        />
+      </Points>
+    </group>
+  );
+}
+
+/**
  * Animated Cosmic Energy Core — a living miniature star.
  * Custom GLSL shaders produce noise-displaced plasma surface,
  * energy veins, fresnel edge glow, and breathing pulse.
@@ -246,10 +301,10 @@ function PulsingCore({ isExpanded, onClick }: { isExpanded: boolean; onClick: ()
     if (shellMtlRef.current) shellMtlRef.current.uniforms.uTime.value = t;
     if (coreRef.current) {
       const base = isExpanded ? 1.15 : 1.0;
-      const pulse = Math.sin(t * 2.0) * 0.04;
+      const pulse = Math.sin(t * 1.0) * 0.015; // Slow breathing, lower amplitude
       const s = base + pulse;
       coreRef.current.scale.lerp(new THREE.Vector3(s, s, s), 0.08);
-      coreRef.current.rotation.y += 0.002;
+      coreRef.current.rotation.y += 0.001; // Stable slow rotation
     }
   });
 
@@ -272,8 +327,9 @@ function PulsingCore({ isExpanded, onClick }: { isExpanded: boolean; onClick: ()
         </mesh>
 
         {/* ── Outer Plasma Shell (fresnel glow shader) ── */}
+        {/* Separated to 0.88 to avoid z-fighting with core or glow layers */}
         <mesh>
-          <sphereGeometry args={[0.85, 48, 48]} />
+          <sphereGeometry args={[0.88, 48, 48]} />
           <shaderMaterial
             ref={shellMtlRef}
             vertexShader={shellVertexShader}
@@ -286,14 +342,18 @@ function PulsingCore({ isExpanded, onClick }: { isExpanded: boolean; onClick: ()
           />
         </mesh>
 
-        {/* ── Volumetric Glow Layers ── */}
+        {/* ── Cosmic Dust / Energy Rings (Elegant, Slow-rotating) ── */}
+        <CosmicDustRing radius={1.15} count={50} speed={0.08} color="#06b6d4" tiltX={Math.PI / 5} tiltZ={Math.PI / 8} />
+        <CosmicDustRing radius={1.35} count={40} speed={-0.06} color="#a855f7" tiltX={-Math.PI / 4} tiltZ={-Math.PI / 6} />
+
+        {/* ── Volumetric Glow Layers (distinctly separated radii to prevent z-fighting) ── */}
         <mesh>
-          <sphereGeometry args={[1.1, 32, 32]} />
-          <meshBasicMaterial color="#a855f7" transparent opacity={0.12} depthWrite={false} blending={THREE.AdditiveBlending} />
+          <sphereGeometry args={[1.22, 32, 32]} />
+          <meshBasicMaterial color="#a855f7" transparent opacity={0.1} depthWrite={false} blending={THREE.AdditiveBlending} />
         </mesh>
         <mesh>
-          <sphereGeometry args={[1.4, 32, 32]} />
-          <meshBasicMaterial color="#3b82f6" transparent opacity={0.06} depthWrite={false} blending={THREE.AdditiveBlending} />
+          <sphereGeometry args={[1.55, 32, 32]} />
+          <meshBasicMaterial color="#3b82f6" transparent opacity={0.05} depthWrite={false} blending={THREE.AdditiveBlending} />
         </mesh>
 
         {/* ── Orbiting Energy Particles ── */}
@@ -310,11 +370,13 @@ function PulsingCore({ isExpanded, onClick }: { isExpanded: boolean; onClick: ()
 function SkillNode({ 
   skill, 
   basePosition, 
-  isExpanded 
+  isExpanded,
+  index
 }: { 
   skill: Skill; 
   basePosition: THREE.Vector3; 
   isExpanded: boolean;
+  index: number;
 }) {
   const [hovered, setHovered] = useState(false);
   const meshRef = useRef<THREE.Mesh>(null);
@@ -342,8 +404,9 @@ function SkillNode({
     // Traveling energy pulse along the connection line
     if (pulseRef.current && groupRef.current) {
       // Moves from center (0) to node (1) and repeats
-      const progress = (t * 0.5 + Math.random() * 0.01) % 1; 
-      // Because pulseRef is a child of the scene, we interpolate from 0,0,0 to the node's current position
+      // Replaced Math.random() with a deterministic phase offset using the node's index
+      const phaseOffset = index * 0.15;
+      const progress = (t * 0.35 + phaseOffset) % 1; 
       pulseRef.current.position.copy(groupRef.current.position).multiplyScalar(progress);
     }
   });
@@ -479,6 +542,7 @@ function GalaxyNetwork({ skills }: { skills: Skill[] }) {
               skill={node.skill} 
               basePosition={node.basePos} 
               isExpanded={isExpanded} 
+              index={i}
             />
             {/* We will draw the static connection line. 
                 Instead of static, we'll wrap it in a component to animate it. */}
@@ -593,12 +657,12 @@ export default function SkillGalaxy({ skills = [] }: SkillGalaxyProps) {
         <GalaxyNetwork skills={skills} />
         <EnergyParticles count={150} />
 
-        {/* Post Processing: Soft Bloom */}
+        {/* Post Processing: Soft Cinematic Bloom */}
         <EffectComposer>
           <Bloom 
-            luminanceThreshold={0.5} 
+            luminanceThreshold={0.2} 
             mipmapBlur 
-            intensity={1.2} 
+            intensity={0.65} 
           />
         </EffectComposer>
       </Canvas>
