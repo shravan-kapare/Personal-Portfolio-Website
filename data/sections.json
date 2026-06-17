@@ -66,7 +66,7 @@
     "id": "evolution",
     "name": "Knowledge Evolution",
     "href": "#evolution",
-    "enabled": true,
+    "enabled": false,
     "custom": true,
     "navVisible": true,
     "content": ""
@@ -84,7 +84,7 @@
     "id": "github",
     "name": "Open Source Core",
     "href": "#github",
-    "enabled": true,
+    "enabled": false,
     "custom": true,
     "navVisible": true,
     "content": ""
