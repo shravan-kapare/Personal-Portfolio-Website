@@ -3,7 +3,6 @@
 import { useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Text, Line, Points, PointMaterial, Billboard, Html } from "@react-three/drei";
-import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 
 // CMS Skill interface
@@ -104,13 +103,15 @@ varying vec3 vPosition;
 varying vec3 vViewDir;
 ${glslNoise}
 void main(){
-  vNormal  = normalize(normalMatrix * normal);
+  vec3 normalCam = normalMatrix * normal;
+  vNormal  = length(normalCam) > 0.0 ? normalize(normalCam) : vec3(0.0, 1.0, 0.0);
   vPosition = position;
   float d  = snoise(position * 2.5 + uTime * 0.3) * 0.07
            + snoise(position * 5.0 + uTime * 0.5) * 0.035;
   vec3 pos = position + normal * d;
   vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);
-  vViewDir = normalize(-mvPos.xyz);
+  float len = length(mvPos.xyz);
+  vViewDir = len > 0.0 ? normalize(-mvPos.xyz) : vec3(0.0, 0.0, 1.0);
   gl_Position = projectionMatrix * mvPos;
 }`;
 
@@ -125,7 +126,7 @@ void main(){
   float n1 = snoise(vPosition * 3.0 + uTime * 0.15);
   float n2 = snoise(vPosition * 6.0 - uTime * 0.2);
   float n3 = snoise(vPosition * 1.5 + uTime * 0.1);
-  float veins = pow(abs(sin(n1 * 4.0 + uTime * 0.25)), 4.0);
+  float veins = pow(max(abs(sin(n1 * 4.0 + uTime * 0.25)), 0.0001), 4.0);
   vec3 white  = vec3(0.95, 0.98, 1.0);
   vec3 cyan   = vec3(0.024, 0.714, 0.831);
   vec3 purple = vec3(0.659, 0.333, 0.969);
@@ -134,7 +135,7 @@ void main(){
   col = mix(col, purple, smoothstep(0.1, 0.8, n2) * 0.4);
   col = mix(col, blue,   smoothstep(0.0, 0.7, n3) * 0.3);
   col += veins * cyan * 0.4;
-  float fresnel = pow(1.0 - max(dot(vNormal, vViewDir), 0.0), 2.5);
+  float fresnel = pow(max(1.0 - max(dot(vNormal, vViewDir), 0.0), 0.0001), 2.5);
   col += fresnel * mix(purple, cyan, sin(uTime * 0.4) * 0.5 + 0.5) * 0.8;
   col *= sin(uTime * 1.0) * 0.03 + 0.97;
   col *= 1.5;
@@ -147,10 +148,12 @@ varying vec3 vNormal;
 varying vec3 vPosition;
 varying vec3 vViewDir;
 void main(){
-  vNormal   = normalize(normalMatrix * normal);
+  vec3 normalCam = normalMatrix * normal;
+  vNormal   = length(normalCam) > 0.0 ? normalize(normalCam) : vec3(0.0, 1.0, 0.0);
   vPosition = position;
   vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
-  vViewDir  = normalize(-mvPos.xyz);
+  float len = length(mvPos.xyz);
+  vViewDir  = len > 0.0 ? normalize(-mvPos.xyz) : vec3(0.0, 0.0, 1.0);
   gl_Position = projectionMatrix * mvPos;
 }`;
 
@@ -163,7 +166,7 @@ varying vec3 vViewDir;
 ${glslNoise}
 void main(){
   float n = snoise(vPosition * 2.0 + uTime * 0.15);
-  float fresnel = pow(1.0 - max(dot(vNormal, vViewDir), 0.0), 1.8);
+  float fresnel = pow(max(1.0 - max(dot(vNormal, vViewDir), 0.0), 0.0001), 1.8);
   vec3 cyan   = vec3(0.024, 0.714, 0.831);
   vec3 purple = vec3(0.659, 0.333, 0.969);
   vec3 col = mix(cyan, purple, n * 0.5 + 0.5) * 1.8;
@@ -296,7 +299,9 @@ function PulsingCore({ isExpanded, onClick }: { isExpanded: boolean; onClick: ()
   const shellUniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
 
   useFrame((state) => {
-    const t = state.clock.elapsedTime;
+    const t = state.clock.getElapsedTime();
+    if (typeof t !== "number" || isNaN(t)) return;
+
     if (coreMtlRef.current) coreMtlRef.current.uniforms.uTime.value = t;
     if (shellMtlRef.current) shellMtlRef.current.uniforms.uTime.value = t;
     if (coreRef.current) {
@@ -346,14 +351,18 @@ function PulsingCore({ isExpanded, onClick }: { isExpanded: boolean; onClick: ()
         <CosmicDustRing radius={1.15} count={50} speed={0.08} color="#06b6d4" tiltX={Math.PI / 5} tiltZ={Math.PI / 8} />
         <CosmicDustRing radius={1.35} count={40} speed={-0.06} color="#a855f7" tiltX={-Math.PI / 4} tiltZ={-Math.PI / 6} />
 
-        {/* ── Volumetric Glow Layers (distinctly separated radii to prevent z-fighting) ── */}
+        {/* ── Volumetric Glow Layers (distinctly separated radii and higher additive opacities for premium native glow) ── */}
         <mesh>
-          <sphereGeometry args={[1.22, 32, 32]} />
-          <meshBasicMaterial color="#a855f7" transparent opacity={0.1} depthWrite={false} blending={THREE.AdditiveBlending} />
+          <sphereGeometry args={[0.98, 32, 32]} />
+          <meshBasicMaterial color="#06b6d4" transparent opacity={0.22} depthWrite={false} blending={THREE.AdditiveBlending} />
         </mesh>
         <mesh>
-          <sphereGeometry args={[1.55, 32, 32]} />
-          <meshBasicMaterial color="#3b82f6" transparent opacity={0.05} depthWrite={false} blending={THREE.AdditiveBlending} />
+          <sphereGeometry args={[1.22, 32, 32]} />
+          <meshBasicMaterial color="#a855f7" transparent opacity={0.15} depthWrite={false} blending={THREE.AdditiveBlending} />
+        </mesh>
+        <mesh>
+          <sphereGeometry args={[1.52, 32, 32]} />
+          <meshBasicMaterial color="#3b82f6" transparent opacity={0.08} depthWrite={false} blending={THREE.AdditiveBlending} />
         </mesh>
 
         {/* ── Orbiting Energy Particles ── */}
@@ -656,15 +665,6 @@ export default function SkillGalaxy({ skills = [] }: SkillGalaxyProps) {
         
         <GalaxyNetwork skills={skills} />
         <EnergyParticles count={150} />
-
-        {/* Post Processing: Soft Cinematic Bloom */}
-        <EffectComposer>
-          <Bloom 
-            luminanceThreshold={0.2} 
-            mipmapBlur 
-            intensity={0.65} 
-          />
-        </EffectComposer>
       </Canvas>
     </div>
   );
