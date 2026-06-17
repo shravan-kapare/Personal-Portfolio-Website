@@ -68,7 +68,7 @@
     "href": "#evolution",
     "enabled": true,
     "custom": true,
-    "navVisible": false,
+    "navVisible": true,
     "content": ""
   },
   {
@@ -86,7 +86,7 @@
     "href": "#github",
     "enabled": true,
     "custom": true,
-    "navVisible": false,
+    "navVisible": true,
     "content": ""
   }
 ]
