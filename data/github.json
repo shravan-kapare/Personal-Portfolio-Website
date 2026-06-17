@@ -4,7 +4,7 @@
       "id": "R_kgDOPasJcA",
       "name": "llm-insurance-assistant2",
       "status": "Normal",
-      "pinned": false,
+      "pinned": true,
       "sortOrder": 999,
       "customDescription": "",
       "customCategory": "",
@@ -14,12 +14,12 @@
       "id": "R_kgDOPaerwQ",
       "name": "llm-insurance-assistant",
       "status": "Normal",
-      "pinned": false,
+      "pinned": true,
       "sortOrder": 999,
       "customDescription": "",
       "customCategory": "",
       "customThumbnail": ""
     }
   ],
-  "updatedAt": "2026-06-17T16:18:51.530Z"
+  "updatedAt": "2026-06-17T16:21:49.180Z"
 }
