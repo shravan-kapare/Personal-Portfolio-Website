@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { readData, writeData } from "@/lib/data";
 import { verifyApiAuth } from "@/lib/auth";
 
-const ALLOWED_TYPES = ["projects", "skills", "achievements", "certifications", "education", "sections"];
+const ALLOWED_TYPES = ["projects", "skills", "achievements", "certifications", "education", "sections", "social"];
 
 export async function PUT(req: Request, { params }: { params: Promise<{ type: string, id: string }> }) {
   const isAuth = await verifyApiAuth(req as any);

@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, Heart, ExternalLink } from "lucide-react";
+import { Mail, Heart, ExternalLink, Code, Terminal } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -58,7 +58,9 @@ const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
 const socialLinks = [
   { name: "GitHub", href: "https://github.com/shravan-kapare", icon: GithubIcon },
   { name: "LinkedIn", href: "https://www.linkedin.com/in/shravan-kapare", icon: LinkedinIcon },
-  { name: "Email", href: "mailto:shravankapare2004@gmail.com", icon: Mail },
+  { name: "LeetCode", href: "https://leetcode.com/u/shravan_kapare/", icon: Code },
+  { name: "GeeksforGeeks", href: "https://www.geeksforgeeks.org/profile/shravanka4ap7?tab=activity", icon: Terminal },
+  { name: "Email", href: "https://mail.google.com/mail/?view=cm&fs=1&to=shravankapare2004@gmail.com", icon: Mail, tooltip: "Email Me" },
   { name: "Instagram", href: "https://www.instagram.com/shravan_kapare", icon: InstagramIcon },
 ];
 
@@ -135,10 +137,11 @@ export default function Footer() {
                   <a
                     key={link.name}
                     href={link.href}
-                    target={link.name === "Email" ? undefined : "_blank"}
-                    rel={link.name === "Email" ? undefined : "noopener noreferrer"}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 hover:border-purple-500/30 transition-all group"
                     aria-label={link.name}
+                    title={link.tooltip || link.name}
                   >
                     <Icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
                   </a>

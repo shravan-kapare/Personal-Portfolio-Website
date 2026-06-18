@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useLenis } from "lenis/react";
 
 interface NavbarProps {
-  sectionsData?: { id: string; name: string; href: string; enabled: boolean }[];
+  sectionsData?: { id: string; name: string; href: string; enabled: boolean; navVisible?: boolean }[];
 }
 
 export default function Navbar({ sectionsData = [] }: NavbarProps) {
@@ -16,14 +16,14 @@ export default function Navbar({ sectionsData = [] }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const links = sectionsData.length > 0 
-    ? sectionsData.filter(s => s.enabled)
+    ? sectionsData.filter(s => s.enabled && s.navVisible !== false)
     : [
-        { name: "Home", href: "#home" },
-        { name: "About", href: "#about" },
-        { name: "Skills", href: "#skills" },
-        { name: "Projects", href: "#projects" },
-        { name: "Education", href: "#education" },
-        { name: "Contact", href: "#contact" },
+        { name: "Home", href: "#home", navVisible: true },
+        { name: "About", href: "#about", navVisible: true },
+        { name: "Skills", href: "#skills", navVisible: true },
+        { name: "Projects", href: "#projects", navVisible: true },
+        { name: "Education", href: "#education", navVisible: true },
+        { name: "Contact", href: "#contact", navVisible: true },
       ];
 
   useEffect(() => {

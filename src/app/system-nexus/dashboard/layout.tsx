@@ -1,7 +1,7 @@
 import { getSession, logout } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Folder, Terminal, Award, FileBadge, GraduationCap, User, LogOut, FileText, Compass } from "lucide-react";
+import { Folder, Terminal, Award, FileBadge, GraduationCap, User, LogOut, FileText, Compass, Home, Settings, Globe, Share2 } from "lucide-react";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
@@ -11,14 +11,19 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   const navItems = [
-    { name: "Projects", href: "/system-nexus/dashboard/projects", icon: Folder },
+    { name: "Hero", href: "/system-nexus/dashboard/hero", icon: Home },
+    { name: "About", href: "/system-nexus/dashboard/about", icon: User },
     { name: "Skills", href: "/system-nexus/dashboard/skills", icon: Terminal },
+    { name: "Projects", href: "/system-nexus/dashboard/projects", icon: Folder },
+    { name: "Education", href: "/system-nexus/dashboard/education", icon: GraduationCap },
     { name: "Achievements", href: "/system-nexus/dashboard/achievements", icon: Award },
     { name: "Certifications", href: "/system-nexus/dashboard/certifications", icon: FileBadge },
-    { name: "Education", href: "/system-nexus/dashboard/education", icon: GraduationCap },
-    { name: "About", href: "/system-nexus/dashboard/about", icon: User },
+    { name: "Knowledge Evolution", href: "/system-nexus/dashboard/evolution", icon: Terminal },
+    { name: "Open Source Core", href: "/system-nexus/dashboard/github", icon: Folder },
+    { name: "Social Links", href: "/system-nexus/dashboard/social", icon: Share2 },
     { name: "Resume", href: "/system-nexus/dashboard/resume", icon: FileText },
     { name: "Navigation", href: "/system-nexus/dashboard/navigation", icon: Compass },
+    { name: "Settings", href: "/system-nexus/dashboard/settings", icon: Settings },
   ];
 
   return (

@@ -31,9 +31,12 @@ const langColors: Record<string, string> = {
 export default function GithubSection({
   username = "shravan-kapare",
   featuredRepoNames = [],
+  sectionData,
 }: {
   username?: string;
   featuredRepoNames?: string[];
+  maxRepos?: number;
+  sectionData?: any;
 }) {
   const [allRepos, setAllRepos] = useState<Repo[]>([]);
   const [displayRepos, setDisplayRepos] = useState<Repo[]>([]);
@@ -102,17 +105,20 @@ export default function GithubSection({
         <div className="flex items-center gap-3 mb-4">
           <div className="w-8 h-px bg-gradient-to-r from-purple-500 to-transparent" />
           <span className="text-xs text-purple-400 uppercase tracking-[0.2em] font-mono">
-            Open Source
+            {sectionData?.badge || "Open Source"}
           </span>
         </div>
-        <div className="flex items-center gap-4 mb-16">
+        <div className="flex items-center gap-4 mb-4">
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
-            Open Source{" "}
+            {(sectionData?.name || "Open Source Core").split(" ")[0]}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
-              Core
+              {(sectionData?.name || "Open Source Core").split(" ").slice(1).join(" ")}
             </span>
           </h2>
         </div>
+        {sectionData?.subtitle && (
+          <p className="text-lg text-gray-400 mb-16">{sectionData.subtitle}</p>
+        )}
       </AnimatedSection>
 
       {loading && !retrying ? (

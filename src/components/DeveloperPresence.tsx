@@ -68,23 +68,28 @@ const presenceLinks = [
  * DeveloperPresence — shows coding platform links and developer identity
  * Placed after the Projects section in the portfolio layout.
  */
-export default function DeveloperPresence() {
+export default function DeveloperPresence({ sectionData }: { sectionData?: any }) {
   return (
     <section id="developer-presence" className="py-24 px-6 md:px-16 lg:px-24">
       <AnimatedSection animation="fadeUp">
         <div className="flex items-center gap-3 mb-4 justify-center">
           <div className="w-8 h-px bg-gradient-to-r from-transparent to-purple-500" />
           <span className="text-xs text-purple-400 uppercase tracking-[0.2em] font-mono">
-            Presence
+            {sectionData?.badge || "Presence"}
           </span>
           <div className="w-8 h-px bg-gradient-to-r from-purple-500 to-transparent" />
         </div>
         <h2 className="text-4xl md:text-5xl font-bold mb-16 text-center tracking-tight">
-          Developer{" "}
+          {(sectionData?.name || "Developer Presence").split(" ")[0]}{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
-            Presence
+            {(sectionData?.name || "Developer Presence").split(" ").slice(1).join(" ")}
           </span>
         </h2>
+        {sectionData?.subtitle && (
+          <p className="text-center text-gray-400 max-w-2xl mx-auto -mt-10 mb-16">
+            {sectionData.subtitle}
+          </p>
+        )}
       </AnimatedSection>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">

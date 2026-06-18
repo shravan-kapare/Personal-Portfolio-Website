@@ -1,0 +1,44 @@
+[
+  {
+    "id": "github",
+    "platform": "GitHub",
+    "url": "https://github.com/shravan-kapare",
+    "visible": true,
+    "order": 1
+  },
+  {
+    "id": "linkedin",
+    "platform": "LinkedIn",
+    "url": "https://www.linkedin.com/in/shravan-kapare",
+    "visible": true,
+    "order": 2
+  },
+  {
+    "id": "email",
+    "platform": "Email",
+    "url": "mailto:shravankapare2004@gmail.com",
+    "visible": true,
+    "order": 3
+  },
+  {
+    "id": "leetcode",
+    "platform": "LeetCode",
+    "url": "https://leetcode.com/u/shravan_kapare/",
+    "visible": true,
+    "order": 4
+  },
+  {
+    "id": "geeksforgeeks",
+    "platform": "GeeksforGeeks",
+    "url": "https://www.geeksforgeeks.org/profile/shravanka4ap7",
+    "visible": true,
+    "order": 5
+  },
+  {
+    "id": "instagram",
+    "platform": "Instagram",
+    "url": "https://www.instagram.com/shravan_kapare",
+    "visible": true,
+    "order": 6
+  }
+]

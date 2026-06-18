@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { readData, writeData } from "@/lib/data";
 import { verifyApiAuth } from "@/lib/auth";
 
-const ALLOWED_TYPES = ["about", "education", "githubFeatured"];
+const ALLOWED_TYPES = ["about", "education", "githubFeatured", "hero", "settings", "evolution", "github"];
 
 export async function GET(req: Request, { params }: { params: Promise<{ type: string }> }) {
   try {

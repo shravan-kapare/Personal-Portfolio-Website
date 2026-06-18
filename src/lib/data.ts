@@ -20,9 +20,29 @@ export async function readData<T>(filename: string): Promise<T> {
   }
 }
 
+import { execSync } from "child_process";
+
 export async function writeData<T>(filename: string, data: T): Promise<void> {
   const filePath = path.join(DATA_DIR, filename);
   // Ensure the directory exists
   await fs.mkdir(DATA_DIR, { recursive: true });
   await fs.writeFile(filePath, JSON.stringify(data, null, 2), "utf-8");
+
+  // Auto-commit system
+  try {
+    const type = filename.replace(".json", "");
+    const commitMsg = `feat(${type}): update ${type} content via CMS`;
+    
+    // Add only the changed JSON file
+    execSync(`git add "${filePath}"`, { cwd: process.cwd(), stdio: 'ignore' });
+    
+    // Commit if there are changes
+    try {
+      execSync(`git commit -m "${commitMsg}"`, { cwd: process.cwd(), stdio: 'ignore' });
+    } catch (e) {
+      // Ignored: Git commit throws an error if there are no changes to commit
+    }
+  } catch (err) {
+    console.error("Git auto-commit failed:", err);
+  }
 }

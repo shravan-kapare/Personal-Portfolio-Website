@@ -1,213 +1,219 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Star, GitBranch, GitFork, Loader2, RefreshCw, Check, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Save, Loader2, RefreshCw, Pin } from "lucide-react";
 
-interface Repo {
-  id: number;
+export interface GithubRepoOverride {
+  id: string; // the node ID from Github or name
   name: string;
-  description: string;
-  html_url: string;
-  stargazers_count: number;
-  forks_count: number;
-  language: string;
+  status: "Featured" | "Normal" | "Archived" | "Hidden";
+  pinned: boolean;
+  sortOrder: number;
+  customDescription: string;
+  customCategory: string;
+  customThumbnail: string;
 }
 
-const langColors: Record<string, string> = {
-  TypeScript: "#3178c6",
-  JavaScript: "#f1e05a",
-  Python: "#3572A5",
-  "C#": "#178600",
-  Java: "#b07219",
-  Dart: "#00B4AB",
-  HTML: "#e34c26",
-  CSS: "#563d7c",
-  "C++": "#f34b7d",
-};
-
-export default function GithubReposAdmin() {
-  const [allRepos, setAllRepos] = useState<Repo[]>([]);
-  const [featured, setFeatured] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchRepos = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+export default function GithubDashboard() {
+  const [repos, setRepos] = useState<any[]>([]);
+  const [overrides, setOverrides] = useState<Record<string, GithubRepoOverride>>({});
+  const [status, setStatus] = useState<"idle" | "loading" | "saving" | "success" | "error">("loading");
+  
+  const fetchGithub = async () => {
+    setStatus("loading");
     try {
-      const [reposRes, featuredRes] = await Promise.all([
-        fetch("/api/github"),
-        fetch("/api/singleton/githubFeatured"),
-      ]);
-
-      const reposData = await reposRes.json();
-      setAllRepos(reposData.repos || []);
-
-      if (featuredRes.ok) {
-        const featuredData = await featuredRes.json();
-        setFeatured(featuredData.repos || []);
-      }
-    } catch (err) {
-      setError("Failed to load repositories.");
-    } finally {
-      setLoading(false);
+      const res = await fetch("/api/github?all=true");
+      if (!res.ok) throw new Error("Failed to fetch github");
+      const { repos: githubData } = await res.json();
+      
+      const overridesRes = await fetch("/api/singleton/github");
+      const overridesData = await overridesRes.json().catch(() => ({ repos: [] }));
+      const ovList: GithubRepoOverride[] = overridesData.repos || [];
+      const ovMap = ovList.reduce((acc, curr) => ({ ...acc, [curr.name]: curr }), {} as Record<string, GithubRepoOverride>);
+      
+      // Auto-detect new repos
+      githubData.forEach((repo: any) => {
+        if (!ovMap[repo.name]) {
+          ovMap[repo.name] = {
+            id: repo.node_id || repo.id?.toString(),
+            name: repo.name,
+            status: "Hidden", // Default state for new repos
+            pinned: false,
+            sortOrder: 999,
+            customDescription: "",
+            customCategory: "",
+            customThumbnail: "",
+          };
+        }
+      });
+      
+      setRepos(githubData);
+      setOverrides(ovMap);
+      setStatus("idle");
+    } catch (e) {
+      console.error(e);
+      setStatus("error");
     }
-  }, []);
+  };
 
   useEffect(() => {
-    fetchRepos();
-  }, [fetchRepos]);
+    fetchGithub();
+  }, []);
 
-  const toggleFeatured = (repoName: string) => {
-    setFeatured((prev) =>
-      prev.includes(repoName)
-        ? prev.filter((r) => r !== repoName)
-        : [...prev, repoName]
-    );
-    setSaved(false);
-  };
-
-  const saveSelection = async () => {
-    setSaving(true);
+  const handleSave = async () => {
+    setStatus("saving");
     try {
-      const res = await fetch("/api/singleton/githubFeatured", {
+      const reposArray = Object.values(overrides);
+      const res = await fetch("/api/singleton/github", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ repos: featured }),
+        body: JSON.stringify({ repos: reposArray }),
       });
-      if (!res.ok) throw new Error("Save failed");
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
+      setStatus(res.ok ? "success" : "error");
     } catch {
-      alert("Failed to save selection.");
-    } finally {
-      setSaving(false);
+      setStatus("error");
     }
+    setTimeout(() => setStatus("idle"), 3000);
   };
 
+  const updateOverride = (name: string, field: keyof GithubRepoOverride, value: any) => {
+    setOverrides(prev => ({
+      ...prev,
+      [name]: { ...prev[name], [field]: value }
+    }));
+  };
+
+  const toggleStatus = (name: string, newStatus: "Featured" | "Normal" | "Archived" | "Hidden") => {
+    updateOverride(name, "status", newStatus);
+  };
+
+  if (status === "loading" && repos.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <Loader2 className="w-8 h-8 text-purple-400 animate-spin" />
+      </div>
+    );
+  }
+
+  // Sort logic for the CMS display
+  const sortedRepos = [...repos].sort((a, b) => {
+    const ovA = overrides[a.name];
+    const ovB = overrides[b.name];
+    if (ovA?.pinned !== ovB?.pinned) return ovA?.pinned ? -1 : 1;
+    if (ovA?.status === "Featured" && ovB?.status !== "Featured") return -1;
+    if (ovA?.status !== "Featured" && ovB?.status === "Featured") return 1;
+    return (ovA?.sortOrder || 999) - (ovB?.sortOrder || 999);
+  });
+
   return (
-    <div>
-      <div className="flex justify-between items-center mb-8">
+    <div className="space-y-8 max-w-6xl pb-10">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">GitHub — Featured Repos</h1>
-          <p className="text-gray-500 text-sm mt-1">
-            Select up to 4 repositories to feature on the public portfolio.
-          </p>
+          <h1 className="text-3xl font-bold text-white mb-1">Open Source Core</h1>
+          <p className="text-gray-400 text-sm">Manage visibility, features, and descriptions for your GitHub repositories.</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex gap-3">
           <button
-            onClick={fetchRepos}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 hover:bg-white/5 text-sm text-gray-300 transition-colors"
+            onClick={fetchGithub}
+            className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-xl transition-colors text-sm"
           >
-            <RefreshCw className="w-4 h-4" /> Refresh
+            <RefreshCw className="w-4 h-4" /> Refresh API
           </button>
           <button
-            onClick={saveSelection}
-            disabled={saving}
-            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-500 disabled:opacity-60 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors"
+            onClick={handleSave}
+            disabled={status === "saving"}
+            className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-semibold rounded-xl transition-all disabled:opacity-70"
           >
-            {saving ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : saved ? (
-              <Check className="w-4 h-4" />
-            ) : null}
-            {saved ? "Saved!" : saving ? "Saving..." : "Save Selection"}
+            {status === "saving" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            Save Changes
           </button>
         </div>
       </div>
 
-      {/* Selected count badge */}
-      <div className="mb-6 flex items-center gap-2">
-        <span className="text-sm text-gray-400">
-          {featured.length} repo{featured.length !== 1 ? "s" : ""} selected
-        </span>
-        {featured.length > 4 && (
-          <span className="text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">
-            ⚠ Only first 4 will be shown
-          </span>
-        )}
-        {featured.length > 0 && (
-          <button
-            onClick={() => {
-              setFeatured([]);
-              setSaved(false);
-            }}
-            className="text-xs text-gray-500 hover:text-gray-300 underline transition-colors ml-2"
-          >
-            Clear all
-          </button>
-        )}
-      </div>
+      <div className="space-y-4">
+        {sortedRepos.map(repo => {
+          const ov = overrides[repo.name] || {};
+          return (
+            <div key={repo.id} className={`bg-white/[0.02] border rounded-2xl p-5 transition-all ${ov.status !== "Hidden" ? "border-white/10" : "border-white/5 opacity-60"}`}>
+              <div className="flex items-start gap-4">
+                <div className="flex flex-col gap-2 border-r border-white/5 pr-4 w-32">
+                  <span className="text-xs text-gray-500 uppercase font-mono">Status</span>
+                  <select 
+                    value={ov.status}
+                    onChange={(e) => toggleStatus(repo.name, e.target.value as any)}
+                    className="bg-black/50 border border-white/10 rounded-lg text-sm text-white px-2 py-1.5 focus:outline-none focus:border-purple-500"
+                  >
+                    <option value="Featured">Featured</option>
+                    <option value="Normal">Normal</option>
+                    <option value="Archived">Archived</option>
+                    <option value="Hidden">Hidden</option>
+                  </select>
 
-      {error && (
-        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
-          {error}
-        </div>
-      )}
+                  <button
+                    onClick={() => updateOverride(repo.name, "pinned", !ov.pinned)}
+                    className={`flex items-center justify-center gap-2 py-1.5 rounded-lg text-xs transition-colors ${ov.pinned ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-white/5 text-gray-400 border border-transparent'}`}
+                  >
+                    <Pin className="w-3 h-3" /> {ov.pinned ? "Pinned" : "Pin Repo"}
+                  </button>
 
-      {loading ? (
-        <div className="flex items-center gap-3 text-gray-400">
-          <Loader2 className="w-4 h-4 animate-spin" /> Loading repositories...
-        </div>
-      ) : (
-        <div className="grid sm:grid-cols-2 gap-4">
-          {allRepos.map((repo) => {
-            const isFeatured = featured.includes(repo.name);
-            return (
-              <button
-                key={repo.id}
-                onClick={() => toggleFeatured(repo.name)}
-                className={`text-left p-5 rounded-2xl border transition-all duration-300 ${
-                  isFeatured
-                    ? "border-purple-500/40 bg-purple-500/10 shadow-[0_0_20px_rgba(168,85,247,0.1)]"
-                    : "border-white/[0.06] bg-white/[0.02] hover:border-white/10"
-                }`}
-              >
-                <div className="flex items-start justify-between gap-3 mb-2">
-                  <div className="flex items-center gap-2">
-                    <GitBranch className={`w-4 h-4 flex-shrink-0 ${isFeatured ? "text-purple-400" : "text-gray-600"}`} />
-                    <h3 className={`font-semibold text-sm ${isFeatured ? "text-purple-200" : "text-white"}`}>
-                      {repo.name}
-                    </h3>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-xs text-gray-500">Order:</span>
+                    <input 
+                      type="number" 
+                      value={ov.sortOrder} 
+                      onChange={(e) => updateOverride(repo.name, "sortOrder", parseInt(e.target.value) || 0)}
+                      className="w-12 bg-black/50 border border-white/10 rounded md px-1 py-1 text-xs text-white text-center"
+                    />
                   </div>
-                  {isFeatured && (
-                    <div className="flex-shrink-0 w-5 h-5 rounded-full bg-purple-600 flex items-center justify-center">
-                      <Check className="w-3 h-3 text-white" />
+                </div>
+
+                <div className="flex-1 space-y-4">
+                  <div>
+                    <div className="flex items-center gap-3">
+                      <h3 className="text-lg text-white font-semibold">{repo.name}</h3>
+                      <a href={repo.html_url} target="_blank" rel="noreferrer" className="text-xs text-blue-400 hover:underline">View on GitHub</a>
                     </div>
-                  )}
-                </div>
-                <p className="text-xs text-gray-500 line-clamp-2 mb-3">
-                  {repo.description || "No description"}
-                </p>
-                <div className="flex items-center gap-4 text-xs text-gray-600">
-                  {repo.language && (
-                    <span className="flex items-center gap-1.5">
-                      <span
-                        className="w-2 h-2 rounded-full"
-                        style={{ backgroundColor: langColors[repo.language] || "#a855f7" }}
+                    <p className="text-sm text-gray-500 line-clamp-1">{repo.description || "No description on GitHub."}</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs text-gray-400 mb-1">Custom Description Override</label>
+                      <textarea
+                        value={ov.customDescription || ""}
+                        onChange={(e) => updateOverride(repo.name, "customDescription", e.target.value)}
+                        placeholder="Leave empty to use GitHub description..."
+                        rows={2}
+                        className="w-full bg-black/30 border border-white/10 rounded-xl px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-purple-500/50"
                       />
-                      {repo.language}
-                    </span>
-                  )}
-                  <span className="flex items-center gap-1">
-                    <Star className="w-3 h-3" /> {repo.stargazers_count}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <GitFork className="w-3 h-3" /> {repo.forks_count}
-                  </span>
+                    </div>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">Custom Category / Tag</label>
+                        <input
+                          value={ov.customCategory || ""}
+                          onChange={(e) => updateOverride(repo.name, "customCategory", e.target.value)}
+                          placeholder="e.g. Machine Learning"
+                          className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-purple-500/50"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">Custom Thumbnail URL</label>
+                        <input
+                          value={ov.customThumbnail || ""}
+                          onChange={(e) => updateOverride(repo.name, "customThumbnail", e.target.value)}
+                          placeholder="https://..."
+                          className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-purple-500/50"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </button>
-            );
-          })}
-          {allRepos.length === 0 && (
-            <div className="col-span-2 p-8 text-center text-gray-500">
-              No repositories found from GitHub API.
+              </div>
             </div>
-          )}
-        </div>
-      )}
+          );
+        })}
+      </div>
     </div>
   );
 }
