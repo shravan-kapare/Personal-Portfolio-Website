@@ -1,7 +1,9 @@
 [
   {
     "id": "home",
+    "badge": "HOME",
     "name": "Home",
+    "subtitle": "",
     "href": "#home",
     "enabled": true,
     "custom": false,
@@ -10,7 +12,9 @@
   },
   {
     "id": "about",
-    "name": "About",
+    "badge": "ABOUT",
+    "name": "About Me",
+    "subtitle": "Discover who I am and what I do",
     "href": "#about",
     "enabled": true,
     "custom": false,
@@ -19,7 +23,9 @@
   },
   {
     "id": "skills",
-    "name": "Skills",
+    "badge": "SKILLS",
+    "name": "Skill Galaxy",
+    "subtitle": "A visual map of my technical expertise",
     "href": "#skills",
     "enabled": true,
     "custom": false,
@@ -28,7 +34,9 @@
   },
   {
     "id": "projects",
-    "name": "Projects",
+    "badge": "PROJECTS",
+    "name": "Featured Work",
+    "subtitle": "Showcasing my latest and greatest projects",
     "href": "#projects",
     "enabled": true,
     "custom": false,
@@ -37,7 +45,9 @@
   },
   {
     "id": "education",
-    "name": "Education",
+    "badge": "EDUCATION",
+    "name": "Academic Journey",
+    "subtitle": "My educational background",
     "href": "#education",
     "enabled": true,
     "custom": false,
@@ -46,7 +56,9 @@
   },
   {
     "id": "achievements",
-    "name": "Achievements",
+    "badge": "ACHIEVEMENTS",
+    "name": "Milestones",
+    "subtitle": "Awards and recognition",
     "href": "#achievements",
     "enabled": true,
     "custom": false,
@@ -54,8 +66,21 @@
     "content": ""
   },
   {
+    "id": "certifications",
+    "badge": "CERTIFICATIONS",
+    "name": "Certifications",
+    "subtitle": "Professional credentials",
+    "href": "#certifications",
+    "enabled": true,
+    "custom": false,
+    "navVisible": true,
+    "content": ""
+  },
+  {
     "id": "contact",
-    "name": "Contact",
+    "badge": "CONTACT",
+    "name": "Let's Connect",
+    "subtitle": "Get in touch with me",
     "href": "#contact",
     "enabled": true,
     "custom": false,
@@ -64,16 +89,20 @@
   },
   {
     "id": "evolution",
+    "badge": "TIMELINE",
     "name": "Knowledge Evolution",
+    "subtitle": "Tracking my journey through time",
     "href": "#evolution",
     "enabled": false,
     "custom": true,
-    "navVisible": true,
+    "navVisible": false,
     "content": ""
   },
   {
     "id": "developer-presence",
+    "badge": "PRESENCE",
     "name": "Developer Presence",
+    "subtitle": "My online technical footprint",
     "href": "#developer-presence",
     "enabled": false,
     "custom": true,
@@ -82,11 +111,13 @@
   },
   {
     "id": "github",
+    "badge": "OPEN SOURCE",
     "name": "Open Source Core",
+    "subtitle": "My contributions to the community",
     "href": "#github",
     "enabled": false,
     "custom": true,
-    "navVisible": true,
+    "navVisible": false,
     "content": ""
   }
 ]
