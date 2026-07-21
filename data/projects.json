@@ -1,25 +1,91 @@
 {
   "meta": {
-    "sectionBadge": "WORK",
-    "sectionTitle": "Innovation Command Center",
-    "sectionSubtitle": "A showcase of projects and technical solutions."
+    "sectionBadge": "PROJECTS",
+    "sectionTitle": "Featured Projects",
+    "sectionSubtitle": "A collection of real-world AI, automation and software development projects."
   },
   "items": [
     {
-      "id": "1",
-      "name": "AR Campus Navigation",
-      "description": "An augmented reality mobile application to navigate the university campus.",
+      "id": "e986dbcd-cd87-464f-8b0c-ce8b48f7b6a6",
+      "name": "AI Powered Insurance Assistant",
+      "description": "LLM-powered insurance assistant capable of answering insurance policy queries, claim-related questions, and simplifying insurance information.",
       "technologies": [
-        "Unity",
-        "AR Foundation",
-        "C#"
+        "Python",
+        "Flask",
+        "Gemini API",
+        "Grok API",
+        "LLMs"
       ],
-      "githubUrl": "https://github.com/shravankapare",
+      "githubUrl": "https://github.com/shravan-kapare",
       "demoUrl": "",
-      "screenshots": [],
-      "category": "AR/VR",
+      "category": "Artificial Intelligence",
       "featured": true,
-      "createdAt": "2026-01-01T00:00:00Z"
+      "createdAt": "2026-07-21T05:34:23.526289Z"
+    },
+    {
+      "id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+      "name": "Astra AI Assistant",
+      "description": "A next-generation Windows AI assistant featuring local intelligence, voice interaction, automation workflows, long-term memory, and an extensible agent architecture designed for real-world productivity.",
+      "technologies": [
+        "Python",
+        "FastAPI",
+        "PySide6",
+        "Whisper",
+        "Ollama",
+        "SQLite",
+        "Automation",
+        "LLMs"
+      ],
+      "githubUrl": "https://github.com/shravan-kapare",
+      "demoUrl": "",
+      "category": "Artificial Intelligence",
+      "featured": true,
+      "createdAt": "2026-07-21T05:34:23.526289Z"
+    },
+    {
+      "id": "05e6c01b-12b2-4d05-b19b-f419b5f926ce",
+      "name": "EVision",
+      "description": "Electric Vehicle Charging Station Finder using Firebase and Location Services.",
+      "technologies": [
+        "Android",
+        "Firebase",
+        "Location Services"
+      ],
+      "githubUrl": "",
+      "demoUrl": "",
+      "category": "Mobile Development",
+      "featured": false,
+      "createdAt": "2026-07-21T05:34:23.526289Z"
+    },
+    {
+      "id": "b41acd89-9800-4452-842b-a3fc5b8f2e0c",
+      "name": "Accident Prevention Kit",
+      "description": "Vehicle safety system designed for accident prevention. Achieved 3rd Rank in National Level Project Competition.",
+      "technologies": [
+        "IoT",
+        "Sensors",
+        "Microcontrollers"
+      ],
+      "githubUrl": "",
+      "demoUrl": "",
+      "category": "IoT",
+      "featured": false,
+      "createdAt": "2026-07-21T05:34:23.526289Z"
+    },
+    {
+      "id": "af8b65b2-eab5-4cba-bd81-a1a56a440965",
+      "name": "AR Campus Navigation",
+      "description": "Marker-based AR campus navigation system using AR.js and A-Frame.",
+      "technologies": [
+        "AR.js",
+        "A-Frame",
+        "HTML/CSS"
+      ],
+      "githubUrl": "",
+      "demoUrl": "",
+      "category": "Augmented Reality",
+      "featured": false,
+      "createdAt": "2026-07-21T05:34:23.526289Z"
     }
   ]
 }

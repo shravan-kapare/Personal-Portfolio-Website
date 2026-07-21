@@ -1,26 +1,39 @@
-[
-  {
-    "id": "1",
-    "title": "Hackathon Winner",
-    "description": "First place at National Tech Symposium for IoT innovation.",
-    "date": "2025-05-15",
-    "category": "Competition",
-    "createdAt": "2026-01-01T00:00:00Z"
+{
+  "meta": {
+    "sectionBadge": "RECOGNITION",
+    "sectionTitle": "Achievements",
+    "sectionSubtitle": "Milestones and recognitions."
   },
-  {
-    "id": "2",
-    "title": "Tech Speaker",
-    "description": "Presented AR applications at University Tech Fest.",
-    "date": "2024-11-20",
-    "category": "Speaking",
-    "createdAt": "2026-01-02T00:00:00Z"
-  },
-  {
-    "title": "Medals",
-    "category": "extra curricular",
-    "date": "2023-05-17",
-    "description": "Gold medal in maths olympiad\n",
-    "id": "f5d477e1-8a63-4532-862e-25bcb7223474",
-    "createdAt": "2026-06-16T17:26:00.663Z"
-  }
-]
+  "items": [
+    {
+      "id": "eda4207b-eaef-46a4-9a26-74a4b5ef9e0a",
+      "title": "3rd Rank \u2013 National Level Project Competition",
+      "description": "Secured 3rd rank for the Accident Prevention Kit project.",
+      "date": "2024",
+      "icon": "Trophy",
+      "color": "amber",
+      "visible": true,
+      "createdAt": "2026-07-21T05:36:38.389063Z"
+    },
+    {
+      "id": "44316c67-bf68-4af7-9a3b-8cbdfdec3dd6",
+      "title": "HackRx Participation",
+      "description": "Participated in the HackRx hackathon, building innovative technical solutions.",
+      "date": "2024",
+      "icon": "Code",
+      "color": "blue",
+      "visible": true,
+      "createdAt": "2026-07-21T05:36:38.389063Z"
+    },
+    {
+      "id": "1bb7b3f5-7cc3-4dd1-86f3-3bb3ce131e93",
+      "title": "Adobe India Hackathon Participation",
+      "description": "Participated in the Adobe India Hackathon, tackling real-world challenges.",
+      "date": "2024",
+      "icon": "Monitor",
+      "color": "red",
+      "visible": true,
+      "createdAt": "2026-07-21T05:36:38.389063Z"
+    }
+  ]
+}

@@ -1,11 +1,27 @@
-[
-  {
-    "id": "1",
-    "name": "AWS Certified Cloud Practitioner",
-    "organization": "Amazon Web Services",
-    "date": "2025-08-01",
-    "credentialUrl": "https://aws.amazon.com/certification/",
-    "imageUrl": "",
-    "createdAt": "2026-01-01T00:00:00Z"
-  }
-]
+{
+  "meta": {
+    "sectionBadge": "CREDENTIALS",
+    "sectionTitle": "Certifications",
+    "sectionSubtitle": "Professional certifications and verified skills."
+  },
+  "items": [
+    {
+      "id": "862f4a59-88c7-42cf-8303-e3db20c3ed4f",
+      "name": "Plasmid Corporation Virtual Internship",
+      "issuer": "Plasmid Corporation",
+      "date": "2024",
+      "link": "",
+      "visible": true,
+      "createdAt": "2026-07-21T05:36:38.389063Z"
+    },
+    {
+      "id": "b8ceba23-bd85-4705-bfc4-413784a06369",
+      "name": "Artificial Intelligence Internship",
+      "issuer": "Internship Program",
+      "date": "2024",
+      "link": "",
+      "visible": true,
+      "createdAt": "2026-07-21T05:36:38.389063Z"
+    }
+  ]
+}

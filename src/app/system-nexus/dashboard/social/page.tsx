@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { Save, Plus, Trash2, Eye, EyeOff, CheckCircle2, AlertCircle, Loader2, GripVertical } from "lucide-react";
 import SectionHeaderEditor from "@/components/admin/SectionHeaderEditor";
 
+import { parseCollectionData } from "@/lib/cms-utils";
+
 const PLATFORM_OPTIONS = [
   "GitHub", "LinkedIn", "Email", "Instagram", "LeetCode",
   "GeeksforGeeks", "X/Twitter", "YouTube", "Discord", "Portfolio Website",
@@ -23,6 +25,7 @@ export default function SocialDashboard() {
   const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
   const [isLoading, setIsLoading] = useState(true);
   const [newLink, setNewLink] = useState({ platform: "GitHub", url: "" });
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -30,8 +33,15 @@ export default function SocialDashboard() {
       fetch("/api/singleton/settings").then((r) => r.json())
     ])
       .then(([socialData, settingsData]) => {
-        if (Array.isArray(socialData)) setLinks(socialData.sort((a, b) => (a.order ?? 99) - (b.order ?? 99)));
-        if (settingsData) {
+        try {
+          const parsedLinks = parseCollectionData(socialData);
+          setLinks(parsedLinks.sort((a: any, b: any) => (a.order ?? 99) - (b.order ?? 99)));
+        } catch (e: any) {
+          console.error("Failed to parse social data:", e);
+          setFetchError(e.message || "Failed to parse social links.");
+        }
+        
+        if (settingsData && !settingsData.error) {
           setSettings({
             resumeLink: settingsData.resumeLink || "",
             connectHeading: settingsData.connectHeading || "Let's Connect"
@@ -117,7 +127,17 @@ export default function SocialDashboard() {
         </p>
       </div>
 
-      <SectionHeaderEditor sectionId="contact" />
+      {fetchError && (
+        <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-6 rounded-xl flex items-center gap-3">
+          <AlertCircle className="w-5 h-5 flex-shrink-0" />
+          <div>
+            <p className="font-medium text-sm">Data Synchronization Error</p>
+            <p className="text-xs opacity-80 mt-1">{fetchError}</p>
+          </div>
+        </div>
+      )}
+
+      <SectionHeaderEditor sectionId="social" />
 
       {/* Global Contact Settings */}
       <div className="bg-white/5 border border-white/10 rounded-xl p-6">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Save, Plus, Trash2, Eye, EyeOff, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import SectionHeaderEditor from "@/components/admin/SectionHeaderEditor";
 
 interface TimelineEntry {
   id: string;
@@ -119,30 +120,7 @@ export default function EvolutionDashboard() {
 
   return (
     <div className="space-y-8 max-w-4xl pb-10">
-      <div>
-        <h1 className="text-3xl font-bold text-white mb-1">Knowledge Evolution</h1>
-        <p className="text-gray-400 text-sm">Manage the timeline of your professional journey and learning events.</p>
-      </div>
-
-      {/* Section Header */}
-      <div className="grid grid-cols-2 gap-4 bg-white/[0.02] border border-white/10 rounded-2xl p-6">
-        <div>
-          <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wider">Section Label</label>
-          <input
-            value={data.sectionLabel}
-            onChange={(e) => setData((d) => ({ ...d, sectionLabel: e.target.value }))}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-purple-500/50"
-          />
-        </div>
-        <div>
-          <label className="block text-xs text-gray-400 mb-2 uppercase tracking-wider">Section Title</label>
-          <input
-            value={data.sectionTitle}
-            onChange={(e) => setData((d) => ({ ...d, sectionTitle: e.target.value }))}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-purple-500/50"
-          />
-        </div>
-      </div>
+      <SectionHeaderEditor sectionId="evolution" />
 
       {/* Timeline Entries */}
       <div className="space-y-4">

@@ -1,16 +1,45 @@
-[
-  {
-    "id": "1",
-    "degree": "B.Tech in Computer Science & Engineering",
-    "institution": "Tatyasaheb Kore Institute of Engineering and Technology, Warananagar",
-    "timeline": "2023 - 2027",
-    "coursework": [
-      "Data Structures",
-      "Algorithms",
-      "Machine Learning",
-      "Cloud Computing"
-    ],
-    "createdAt": "2026-01-01T00:00:00Z",
-    "updatedAt": "2026-06-07T14:26:37.636Z"
-  }
-]
+{
+  "meta": {
+    "sectionBadge": "ACADEMICS",
+    "sectionTitle": "Educational Journey",
+    "sectionSubtitle": "My academic background and qualifications."
+  },
+  "items": [
+    {
+      "id": "84c48c2b-e559-4054-85d7-a6e3fbbd33e4",
+      "degree": "Bachelor of Technology in Computer Science & Engineering",
+      "institution": "Tatyasaheb Kore Institute of Engineering and Technology",
+      "duration": "2023 - 2027",
+      "grade": "CGPA: 8.90",
+      "description": "Focus on Software Development, Artificial Intelligence, and Computer Science fundamentals.",
+      "coursework": [
+        "Data Structures",
+        "Algorithms",
+        "Operating Systems",
+        "DBMS",
+        "Computer Networks",
+        "Machine Learning",
+        "Cloud Computing",
+        "Blockchain"
+      ]
+    },
+    {
+      "id": "38118c9c-ea26-44b7-9970-7562e86b2e75",
+      "degree": "Higher Secondary",
+      "institution": "Yashwantrao Chavan Warana Mahavidyalaya",
+      "duration": "2023",
+      "grade": "67%",
+      "description": "Pre-university education with a focus on science and mathematics.",
+      "coursework": []
+    },
+    {
+      "id": "a2652e96-e4ea-457f-b866-467deea443c4",
+      "degree": "Secondary School",
+      "institution": "Yashwant International English Academy",
+      "duration": "2021",
+      "grade": "88%",
+      "description": "Foundation studies.",
+      "coursework": []
+    }
+  ]
+}

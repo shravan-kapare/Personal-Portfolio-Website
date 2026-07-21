@@ -7,6 +7,7 @@ import DeveloperPresence from "@/components/DeveloperPresence";
 import Footer from "@/components/Footer";
 import LoadingScreen from "@/components/LoadingScreen";
 import SkillGalaxy from "@/components/SkillGalaxy";
+import ConnectSection from "@/components/ConnectSection";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -16,22 +17,59 @@ import {
   GitBranch,
   Award,
   BookOpen,
+  Trophy,
+  Code,
+  Monitor,
+  Star,
+  Zap,
+  Target,
+  Cpu,
+  Globe,
+  Medal,
+  Flame,
 } from "lucide-react";
+
+const ACHIEVEMENT_ICON_MAP: Record<string, React.ElementType> = {
+  Award,
+  Trophy,
+  Code,
+  Monitor,
+  Star,
+  Zap,
+  Target,
+  Cpu,
+  Globe,
+  Medal,
+  Flame,
+  BookOpen,
+};
+
+function AchievementIcon({ name, className }: { name?: string; className?: string }) {
+  const Icon = ((name && ACHIEVEMENT_ICON_MAP[name]) ? ACHIEVEMENT_ICON_MAP[name] : Award) as React.ComponentType<{ className?: string }>;
+  return <Icon className={className ?? ""} />;
+}
 import { motion } from "framer-motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
 import KnowledgeTimeline from "@/components/KnowledgeTimeline";
 import AnimatedSection from "@/components/AnimatedSection";
+import ProfessionalHome from "@/components/ProfessionalHome";
 
 interface ClientHomeProps {
+  heroData?: any;
+  settingsData?: any;
   aboutData: any;
-  skillsData: any[];
-  projectsData: any[];
-  educationData: any[];
-  achievementsData: any[];
-  certificationsData: any[];
-  sectionsData: any[];
+  skillsData: { meta: any, items: any[] };
+  projectsData: { meta: any, items: any[] };
+  educationData: { meta: any, items: any[] };
+  achievementsData: { meta: any, items: any[] };
+  certificationsData: { meta: any, items: any[] };
+  sectionsData: any[]; // sections config doesn't have meta/items yet
+  socialData?: { meta: any, items: any[] };
+  evolutionData?: { meta: any, timelineEntries: any[] };
+  githubData?: any;
+  counts?: any;
 }
 
 // Section divider component
@@ -59,6 +97,8 @@ function SectionDivider({ color = "purple" }: { color?: string }) {
 }
 
 export default function ClientHome({
+  heroData,
+  settingsData,
   aboutData,
   skillsData,
   projectsData,
@@ -66,10 +106,53 @@ export default function ClientHome({
   achievementsData,
   certificationsData,
   sectionsData,
+  socialData,
+  evolutionData,
+  githubData,
+  counts,
 }: ClientHomeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   
+  const [theme, setTheme] = useState<"cosmic" | "professional" | null>(null);
+  const [showSelector, setShowSelector] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("portfolio-experience") as "cosmic" | "professional" | null;
+    const mode = settingsData?.portfolioMode || "visitor-choice";
+
+    if (mode === "cosmic") {
+      setTheme("cosmic");
+    } else if (mode === "professional") {
+      setTheme("professional");
+    } else {
+      if (saved && (saved === "cosmic" || saved === "professional")) {
+        setTheme(saved);
+      } else {
+        if (settingsData?.showExperienceSelector !== false) {
+          setShowSelector(true);
+        } else {
+          setTheme(settingsData?.defaultExperience || "cosmic");
+        }
+      }
+    }
+  }, [settingsData]);
+
+  const selectExperience = (selected: "cosmic" | "professional") => {
+    setTheme(selected);
+    setShowSelector(false);
+    localStorage.setItem("portfolio-experience", selected);
+  };
+
+  const handleThemeSwitch = (newTheme: "cosmic" | "professional") => {
+    setTheme(newTheme);
+    localStorage.setItem("portfolio-experience", newTheme);
+  };
+
   const isSectionEnabled = (sectionId: string) => {
+    const visibility = settingsData?.sectionVisibility?.[sectionId];
+    if (visibility) {
+      return visibility.cosmic;
+    }
     if (!sectionsData || sectionsData.length === 0) {
       if (sectionId === "achievements" || sectionId === "certifications") return false;
       return true;
@@ -89,15 +172,83 @@ export default function ClientHome({
   }, []);
 
   // Group skills by category
-  const skillsByCategory = skillsData.reduce((acc: any, skill: any) => {
+  const skillsByCategory = skillsData.items.reduce((acc: any, skill: any) => {
     if (!acc[skill.category]) acc[skill.category] = [];
     acc[skill.category].push(skill);
     return acc;
   }, {});
 
   // Separate featured and other projects
-  const featuredProjects = projectsData.filter((p: any) => p.featured);
-  const otherProjects = projectsData.filter((p: any) => !p.featured);
+  const featuredProjects = projectsData.items.filter((p: any) => p.featured);
+  const otherProjects = projectsData.items.filter((p: any) => !p.featured);
+
+  if (showSelector) {
+    return (
+      <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#08070b] text-white p-6 font-sans antialiased">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.1)_0%,transparent_70%)] pointer-events-none" />
+        <div className="relative max-w-2xl w-full text-center space-y-12">
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">Choose Your Experience</h1>
+            <p className="text-gray-400 text-sm md:text-base max-w-md mx-auto">Select a design presentation mode. You can switch this at any time in the navigation bar.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <button
+              onClick={() => selectExperience("cosmic")}
+              className="group relative text-left bg-white/[0.02] hover:bg-white/[0.04] border border-white/10 hover:border-purple-500/50 rounded-3xl p-8 transition-all duration-300 transform hover:scale-[1.02] flex flex-col justify-between min-h-[220px]"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl" />
+              <div className="space-y-4 relative z-10">
+                <span className="text-4xl">🚀</span>
+                <h2 className="text-2xl font-bold">Cosmic Portfolio</h2>
+                <p className="text-gray-400 text-sm leading-relaxed">Immersive interactive portfolio experience with animations and 3D galaxy particles.</p>
+              </div>
+              <span className="text-xs text-purple-400 font-mono font-medium tracking-wider group-hover:translate-x-1 transition-transform inline-flex items-center gap-1 mt-6">
+                Enter Orbit &rarr;
+              </span>
+            </button>
+
+            <button
+              onClick={() => selectExperience("professional")}
+              className="group relative text-left bg-white/[0.02] hover:bg-white/[0.04] border border-white/10 hover:border-blue-500/50 rounded-3xl p-8 transition-all duration-300 transform hover:scale-[1.02] flex flex-col justify-between min-h-[220px]"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl" />
+              <div className="space-y-4 relative z-10">
+                <span className="text-4xl">💼</span>
+                <h2 className="text-2xl font-bold">Professional Portfolio</h2>
+                <p className="text-gray-400 text-sm leading-relaxed">Clean recruiter-friendly presentation with reduced animations and high readability.</p>
+              </div>
+              <span className="text-xs text-blue-400 font-mono font-medium tracking-wider group-hover:translate-x-1 transition-transform inline-flex items-center gap-1 mt-6">
+                View Resume Mode &rarr;
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (theme === "professional") {
+    return (
+      <ProfessionalHome
+        heroData={heroData}
+        settingsData={settingsData}
+        aboutData={aboutData}
+        skillsData={skillsData}
+        projectsData={projectsData}
+        educationData={educationData}
+        achievementsData={achievementsData}
+        certificationsData={certificationsData}
+        sectionsData={sectionsData}
+        socialData={socialData}
+        evolutionData={evolutionData}
+        githubData={githubData}
+        counts={counts}
+        currentTheme={theme}
+        onThemeSwitch={handleThemeSwitch}
+      />
+    );
+  }
 
   return (
     <main
@@ -106,11 +257,19 @@ export default function ClientHome({
       style={{ fontFamily: "var(--font-space), sans-serif" }}
     >
       <LoadingScreen />
-      <GlobalCanvas skills={skillsData} />
-      <Navbar sectionsData={sectionsData} />
+      {theme === "cosmic" && <GlobalCanvas skills={skillsData.items} />}
+      <Navbar 
+        sectionsData={sectionsData.map(s => ({
+          ...s,
+          enabled: settingsData?.sectionVisibility?.[s.id]?.cosmic !== false
+        }))} 
+        currentTheme={theme || "cosmic"}
+        onThemeSwitch={handleThemeSwitch}
+        allowVisitorSwitching={settingsData?.allowVisitorSwitching}
+      />
 
       <div className="relative z-10">
-        {/* ================================================================ */}
+{/* ================================================================ */}
         {/* HERO SECTION                                                     */}
         {/* ================================================================ */}
         <section
@@ -155,7 +314,7 @@ export default function ClientHome({
                     "linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.6) 100%)",
                 }}
               >
-                Shravan
+                {(heroData?.mainName || "Shravan\nKapare.").split("\n")[0]}
               </motion.span>
               <motion.span
                 initial={{ opacity: 0, y: 30 }}
@@ -163,7 +322,7 @@ export default function ClientHome({
                 transition={{ delay: 2.2, duration: 0.8 }}
                 className="block text-gradient animate-gradient bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500"
               >
-                Kapare.
+                {(heroData?.mainName || "Shravan\nKapare.").split("\n")[1] || ""}
               </motion.span>
             </h1>
 
@@ -191,8 +350,8 @@ export default function ClientHome({
               transition={{ delay: 2.8 }}
               className="flex gap-3 justify-center mt-6 flex-wrap"
             >
-              {["AR Developer", "ML Enthusiast", "IoT Innovator"].map(
-                (tag, i) => (
+              {(heroData?.tags || ["AR Developer", "ML Enthusiast", "IoT Innovator"]).map(
+                (tag: string, i: number) => (
                   <motion.span
                     key={tag}
                     initial={{ opacity: 0, y: 15, scale: 0.9 }}
@@ -270,16 +429,11 @@ export default function ClientHome({
 
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-8 h-px bg-gradient-to-r from-purple-500 to-transparent" />
-                    <span className="text-xs text-purple-400 uppercase tracking-[0.2em] font-mono">
-                      About
-                    </span>
+                    <span className="text-xs text-purple-400 uppercase tracking-[0.2em] font-mono">{aboutData?.sectionBadge || "About"}</span>
                   </div>
 
                   <h2 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight">
-                    Identity{" "}
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
-                      Core
-                    </span>
+                    {aboutData?.sectionTitle || "Identity Core"}
                   </h2>
 
                   <div className="space-y-4 text-base md:text-lg text-gray-400 leading-relaxed">
@@ -290,9 +444,9 @@ export default function ClientHome({
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-white/[0.06]">
                     {[
-                      { value: `${projectsData.length}+`, label: "Projects" },
-                      { value: `${achievementsData.length}+`, label: "Achievements" },
-                      { value: `${skillsData.length}`, label: "Technologies" },
+                      { value: `${projectsData.items.length}+`, label: "Projects" },
+                      { value: `${achievementsData.items.length}+`, label: "Achievements" },
+                      { value: `${skillsData.items.length}`, label: "Technologies" },
                       { value: "∞", label: "Curiosity" },
                     ].map((stat, i) => (
                       <div key={i} className="text-center md:text-left">
@@ -309,7 +463,7 @@ export default function ClientHome({
 
                 {/* Right Column: 3D Visualization */}
                 <AnimatedSection animation="fadeIn" delay={0.2} className="w-full h-[500px] lg:h-[600px] relative">
-                  <SkillGalaxy skills={skillsData} />
+                  <SkillGalaxy skills={skillsData.items} />
                 </AnimatedSection>
 
               </div>
@@ -333,14 +487,11 @@ export default function ClientHome({
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-px bg-gradient-to-r from-blue-500 to-transparent" />
               <span className="text-xs text-blue-400 uppercase tracking-[0.2em] font-mono">
-                Expertise
+                {skillsData?.meta?.sectionBadge || "Expertise"}
               </span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-16 tracking-tight">
-              Skills{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
-                Laboratory
-              </span>
+              {skillsData?.meta?.sectionTitle || "Skills Laboratory"}
             </h2>
           </AnimatedSection>
 
@@ -409,14 +560,11 @@ export default function ClientHome({
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-px bg-gradient-to-r from-cyan-500 to-transparent" />
               <span className="text-xs text-cyan-400 uppercase tracking-[0.2em] font-mono">
-                Work
+                {projectsData?.meta?.sectionBadge || "Work"}
               </span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-16 tracking-tight">
-              Innovation{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
-                Command Center
-              </span>
+              {projectsData?.meta?.sectionTitle || "Innovation Command Center"}
             </h2>
           </AnimatedSection>
 
@@ -585,7 +733,7 @@ export default function ClientHome({
             </div>
           )}
 
-          {projectsData.length === 0 && (
+          {projectsData.items.length === 0 && (
             <p className="text-gray-500 text-center">
               No projects added yet. Mainframe waiting for initialization.
             </p>
@@ -616,14 +764,11 @@ export default function ClientHome({
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-px bg-gradient-to-r from-blue-500 to-transparent" />
               <span className="text-xs text-blue-400 uppercase tracking-[0.2em] font-mono">
-                Education
+                {educationData?.meta?.sectionBadge || "Education"}
               </span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-16 tracking-tight">
-              Timeline{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
-                Corridor
-              </span>
+              {educationData?.meta?.sectionTitle || "Timeline Corridor"}
             </h2>
           </AnimatedSection>
 
@@ -632,7 +777,7 @@ export default function ClientHome({
             delay={0.2}
             className="max-w-2xl border-l-2 border-white/10 ml-4 pl-8 space-y-16"
           >
-            {educationData.map((edu: any) => (
+            {educationData.items.map((edu: any) => (
               <div key={edu.id} className="relative">
                 <div className="absolute -left-[41px] top-2 w-5 h-5 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 ring-4 ring-black shadow-[0_0_15px_rgba(59,130,246,0.4)]" />
                 <div className="flex items-center gap-2 mb-1">
@@ -667,7 +812,7 @@ export default function ClientHome({
                   )}
               </div>
             ))}
-            {educationData.length === 0 && (
+            {educationData.items.length === 0 && (
               <p className="text-gray-500">No education history added yet.</p>
             )}
           </AnimatedSection>
@@ -677,37 +822,6 @@ export default function ClientHome({
         )}
 
 
-
-        {/* ================================================================ */}
-        {/* KNOWLEDGE EVOLUTION SECTION                                      */}
-        {/* ================================================================ */}
-        <section id="evolution" className="min-h-screen py-24 px-6 md:px-16 lg:px-24">
-          <AnimatedSection animation="fadeUp">
-            <div className="flex items-center gap-3 mb-4 justify-center">
-              <div className="w-8 h-px bg-gradient-to-r from-transparent to-gold-500" />
-              <span className="text-xs text-amber-400 uppercase tracking-[0.2em] font-mono">
-                Journey
-              </span>
-              <div className="w-8 h-px bg-gradient-to-r from-amber-500 to-transparent" />
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-16 text-center tracking-tight">
-              Knowledge{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">
-                Evolution
-              </span>
-            </h2>
-          </AnimatedSection>
-          <AnimatedSection animation="fadeUp" delay={0.2}>
-            <KnowledgeTimeline
-              skills={skillsData}
-              projects={projectsData}
-              achievements={achievementsData}
-              certifications={certificationsData}
-            />
-          </AnimatedSection>
-        </section>
-
-        <SectionDivider color="purple" />
 
         {/* ================================================================ */}
         {/* ACHIEVEMENTS SECTION                                             */}
@@ -723,20 +837,17 @@ export default function ClientHome({
               <div className="flex items-center gap-3 mb-4 justify-center">
                 <div className="w-8 h-px bg-gradient-to-r from-transparent to-amber-500" />
                 <span className="text-xs text-amber-400 uppercase tracking-[0.2em] font-mono">
-                  Recognition
+                  {achievementsData?.meta?.sectionBadge || "Recognition"}
                 </span>
                 <div className="w-8 h-px bg-gradient-to-r from-amber-500 to-transparent" />
               </div>
               <h2 className="text-4xl md:text-5xl font-bold mb-16 text-center tracking-tight">
-                Achievement{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-yellow-300">
-                  Vault
-                </span>
+                {achievementsData?.meta?.sectionTitle || "Achievement Vault"}
               </h2>
             </AnimatedSection>
 
             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5">
-              {achievementsData.map((achievement: any, idx: number) => {
+              {achievementsData.items.map((achievement: any, idx: number) => {
                 const themes = [
                   {
                     gradient: "from-yellow-500/10",
@@ -784,7 +895,7 @@ export default function ClientHome({
                       <div
                         className={`w-14 h-14 mx-auto rounded-xl flex items-center justify-center mb-4 ${theme.icon} bg-black/40 border border-current/20`}
                       >
-                        <Award className="w-6 h-6" />
+                        <AchievementIcon name={achievement.icon} className="w-6 h-6" />
                       </div>
                       <h3 className="text-base font-bold mb-2 group-hover:text-white transition-colors">
                         {achievement.title}
@@ -801,7 +912,7 @@ export default function ClientHome({
                   </AnimatedSection>
                 );
               })}
-              {achievementsData.length === 0 && (
+              {achievementsData.items.length === 0 && (
                 <p className="text-gray-500 col-span-3 text-center">
                   No achievements added yet.
                 </p>
@@ -816,7 +927,7 @@ export default function ClientHome({
         {/* ================================================================ */}
         {/* CERTIFICATIONS SECTION                                           */}
         {/* ================================================================ */}
-        {isSectionEnabled("certifications") && certificationsData.length > 0 && (
+        {isSectionEnabled("certifications") && certificationsData.items.length > 0 && (
           <>
             <section
               id="certifications"
@@ -826,20 +937,17 @@ export default function ClientHome({
               <div className="flex items-center gap-3 mb-4 justify-center">
                 <div className="w-8 h-px bg-gradient-to-r from-transparent to-cyan-500" />
                 <span className="text-xs text-cyan-400 uppercase tracking-[0.2em] font-mono">
-                  Credentials
+                  {certificationsData?.meta?.sectionBadge || "Credentials"}
                 </span>
                 <div className="w-8 h-px bg-gradient-to-r from-cyan-500 to-transparent" />
               </div>
               <h2 className="text-4xl md:text-5xl font-bold mb-16 text-center tracking-tight">
-                Certification{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
-                  Archive
-                </span>
+                {certificationsData?.meta?.sectionTitle || "Certification Archive"}
               </h2>
             </AnimatedSection>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
-              {certificationsData.map((cert: any, idx: number) => (
+              {certificationsData.items.map((cert: any, idx: number) => (
                 <AnimatedSection
                   key={cert.id}
                   animation="scaleUp"
@@ -886,6 +994,39 @@ export default function ClientHome({
 
 
         {/* ================================================================ */}
+        {/* CONTACT SECTION                                                  */}
+        {/* ================================================================ */}
+        <ConnectSection socialData={socialData?.items} settingsData={settingsData} />
+
+{/* ================================================================ */}
+        {/* KNOWLEDGE EVOLUTION SECTION                                      */}
+        {/* ================================================================ */}
+        <section id="evolution" className="min-h-screen py-24 px-6 md:px-16 lg:px-24">
+          <AnimatedSection animation="fadeUp">
+            <div className="flex items-center gap-3 mb-4 justify-center">
+              <div className="w-8 h-px bg-gradient-to-r from-transparent to-gold-500" />
+              <span className="text-xs text-amber-400 uppercase tracking-[0.2em] font-mono">
+                {evolutionData?.meta?.sectionBadge || "Journey"}
+              </span>
+              <div className="w-8 h-px bg-gradient-to-r from-amber-500 to-transparent" />
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-16 text-center tracking-tight">
+              {evolutionData?.meta?.sectionTitle || "Knowledge Evolution"}
+            </h2>
+          </AnimatedSection>
+          <AnimatedSection animation="fadeUp" delay={0.2}>
+            <KnowledgeTimeline
+              skills={skillsData.items}
+              projects={projectsData.items}
+              achievements={achievementsData.items}
+              certifications={certificationsData.items}
+            />
+          </AnimatedSection>
+        </section>
+
+        <SectionDivider color="purple" />
+
+        {/* ================================================================ */}
         {/* GITHUB SECTION                                                   */}
         {/* ================================================================ */}
         {sectionsData && sectionsData.filter((s: any) => s.custom && s.enabled).map((sec: any) => (
@@ -913,74 +1054,10 @@ export default function ClientHome({
         <GithubSection username="shravan-kapare" />
         <SectionDivider color="blue" />
 
-        {/* ================================================================ */}
-        {/* CONTACT SECTION                                                  */}
-        {/* ================================================================ */}
-        <section
-          id="contact"
-          className="min-h-screen flex items-center justify-center px-6 py-24"
-        >
-          <AnimatedSection
-            animation="scaleUp"
-            className="max-w-md w-full relative"
-          >
-            {/* Background glow */}
-            <div
-              className="absolute -inset-20 rounded-full pointer-events-none opacity-30"
-              style={{
-                background:
-                  "radial-gradient(circle, rgba(168,85,247,0.15) 0%, transparent 60%)",
-                filter: "blur(60px)",
-              }}
-            />
-
-            <div className="relative bg-white/[0.02] backdrop-blur-xl p-8 md:p-10 rounded-3xl border border-white/[0.06]">
-              <div className="flex items-center gap-3 mb-2 justify-center">
-                <div className="w-8 h-px bg-gradient-to-r from-transparent to-purple-500" />
-                <span className="text-xs text-purple-400 uppercase tracking-[0.2em] font-mono">
-                  Contact
-                </span>
-                <div className="w-8 h-px bg-gradient-to-r from-purple-500 to-transparent" />
-              </div>
-
-              <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center tracking-tight">
-                Communication{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
-                  Terminal
-                </span>
-              </h2>
-
-              <form className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Designation / Name"
-                  className="w-full bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-purple-500/50 focus:bg-white/[0.05] transition-all duration-300"
-                />
-                <input
-                  type="email"
-                  placeholder="Signal Origin (Email)"
-                  className="w-full bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-purple-500/50 focus:bg-white/[0.05] transition-all duration-300"
-                />
-                <textarea
-                  placeholder="Message Payload"
-                  rows={4}
-                  className="w-full bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-purple-500/50 focus:bg-white/[0.05] transition-all duration-300 resize-none"
-                />
-                <button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white text-sm font-semibold py-3 rounded-xl transition-all duration-300 hover:shadow-[0_0_30px_rgba(168,85,247,0.3)] transform hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  Transmit Signal
-                </button>
-              </form>
-            </div>
-          </AnimatedSection>
-        </section>
-
-        {/* ================================================================ */}
+                {/* ================================================================ */}
         {/* FOOTER                                                           */}
         {/* ================================================================ */}
-        <Footer />
+        <Footer socialData={socialData} />
       </div>
     </main>
   );

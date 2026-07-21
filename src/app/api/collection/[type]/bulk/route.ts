@@ -15,7 +15,15 @@ export async function PUT(req: Request, { params }: { params: Promise<{ type: st
     const body = await req.json();
     if (!Array.isArray(body)) return NextResponse.json({ error: "Expected an array" }, { status: 400 });
 
-    await writeData(`${type}.json`, body);
+    const { readData } = await import("@/lib/data");
+    let currentData = await readData<any>(`${type}.json`).catch(() => ([]));
+    
+    if (Array.isArray(currentData)) {
+      await writeData(`${type}.json`, body);
+    } else {
+      currentData.items = body;
+      await writeData(`${type}.json`, currentData);
+    }
     
     return NextResponse.json({ success: true });
   } catch (err) {

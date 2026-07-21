@@ -1,15 +1,23 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, Menu, X } from "lucide-react";
+import { FileText, Menu, X, Briefcase, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLenis } from "lenis/react";
 
 interface NavbarProps {
   sectionsData?: { id: string; name: string; href: string; enabled: boolean; navVisible?: boolean }[];
+  currentTheme?: "cosmic" | "professional";
+  onThemeSwitch?: (theme: "cosmic" | "professional") => void;
+  allowVisitorSwitching?: boolean;
 }
 
-export default function Navbar({ sectionsData = [] }: NavbarProps) {
+export default function Navbar({ 
+  sectionsData = [],
+  currentTheme = "cosmic",
+  onThemeSwitch,
+  allowVisitorSwitching = true
+}: NavbarProps) {
   const lenis = useLenis();
   const [active, setActive] = useState("#home");
   const [scrolled, setScrolled] = useState(false);
@@ -29,24 +37,51 @@ export default function Navbar({ sectionsData = [] }: NavbarProps) {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
-
-      const sections = links.map(
-        (link) => document.querySelector(link.href) as HTMLElement
-      );
-      const scrollPos = window.scrollY + window.innerHeight / 2;
-
-      let currentActive = "#home";
-      sections.forEach((section) => {
-        if (section && section.offsetTop <= scrollPos) {
-          currentActive = `#${section.id}`;
-        }
-      });
-      setActive(currentActive);
     };
 
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+
+    // IntersectionObserver for active section tracking
+    const sectionIds = links.map(link => link.href.replace('#', ''));
+    const sections = sectionIds
+      .map(id => document.getElementById(id))
+      .filter(Boolean) as HTMLElement[];
+
+    const ratioMap = new Map<string, number>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          ratioMap.set(`#${entry.target.id}`, entry.intersectionRatio);
+        });
+
+        // Find section with highest intersection ratio
+        let maxRatio = 0;
+        let maxId = '#home';
+        ratioMap.forEach((ratio, id) => {
+          if (ratio > maxRatio) {
+            maxRatio = ratio;
+            maxId = id;
+          }
+        });
+
+        if (maxRatio > 0) {
+          setActive(maxId);
+        }
+      },
+      {
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+        rootMargin: '-20% 0px -50% 0px',
+      }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      observer.disconnect();
+    };
+  }, [links]);
 
   const handleNavClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
@@ -119,6 +154,20 @@ export default function Navbar({ sectionsData = [] }: NavbarProps) {
 
           {/* Right Actions */}
           <div className="flex items-center gap-3">
+            {allowVisitorSwitching && onThemeSwitch && (
+              <button
+                onClick={() => onThemeSwitch(currentTheme === "cosmic" ? "professional" : "cosmic")}
+                className="flex items-center justify-center w-9 h-9 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all hover:border-purple-500/50"
+                title={currentTheme === "cosmic" ? "Switch to Professional Theme" : "Switch to Cosmic Theme"}
+              >
+                {currentTheme === "cosmic" ? (
+                  <Briefcase className="w-4 h-4 text-purple-300" />
+                ) : (
+                  <Sparkles className="w-4 h-4 text-blue-300" />
+                )}
+              </button>
+            )}
+
             <a
               href="/resume.pdf"
               target="_blank"
@@ -199,7 +248,29 @@ export default function Navbar({ sectionsData = [] }: NavbarProps) {
               </nav>
 
               {/* Mobile Resume Button */}
-              <div className="p-6 border-t border-white/5">
+              <div className="p-6 border-t border-white/5 space-y-3">
+                {allowVisitorSwitching && onThemeSwitch && (
+                  <button
+                    onClick={() => {
+                      onThemeSwitch(currentTheme === "cosmic" ? "professional" : "cosmic");
+                      setMobileOpen(false);
+                    }}
+                    className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm font-medium text-white hover:bg-white/10 transition-all"
+                  >
+                    {currentTheme === "cosmic" ? (
+                      <>
+                        <Briefcase className="w-4 h-4 text-purple-300" />
+                        <span>Professional Mode</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 text-blue-300" />
+                        <span>Cosmic Mode</span>
+                      </>
+                    )}
+                  </button>
+                )}
+
                 <a
                   href="/resume.pdf"
                   target="_blank"

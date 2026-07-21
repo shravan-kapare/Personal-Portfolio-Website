@@ -1,44 +1,53 @@
-[
-  {
-    "id": "github",
-    "platform": "GitHub",
-    "url": "https://github.com/shravan-kapare",
-    "visible": true,
-    "order": 1
+{
+  "meta": {
+    "sectionBadge": "CONTACT",
+    "sectionTitle": "Communication Terminal",
+    "sectionSubtitle": "Connect with me through various channels.",
+    "connectHeading": "Let's Talk",
+    "resumeLink": "/resume.pdf"
   },
-  {
-    "id": "linkedin",
-    "platform": "LinkedIn",
-    "url": "https://www.linkedin.com/in/shravan-kapare",
-    "visible": true,
-    "order": 2
-  },
-  {
-    "id": "email",
-    "platform": "Email",
-    "url": "mailto:shravankapare2004@gmail.com",
-    "visible": true,
-    "order": 3
-  },
-  {
-    "id": "leetcode",
-    "platform": "LeetCode",
-    "url": "https://leetcode.com/u/shravan_kapare/",
-    "visible": true,
-    "order": 4
-  },
-  {
-    "id": "geeksforgeeks",
-    "platform": "GeeksforGeeks",
-    "url": "https://www.geeksforgeeks.org/profile/shravanka4ap7",
-    "visible": true,
-    "order": 5
-  },
-  {
-    "id": "instagram",
-    "platform": "Instagram",
-    "url": "https://www.instagram.com/shravan_kapare",
-    "visible": true,
-    "order": 6
-  }
-]
+  "items": [
+    {
+      "id": "9b68aede-4974-486f-bb09-0b9b8fc3784f",
+      "platform": "GitHub",
+      "url": "https://github.com/shravan-kapare",
+      "visible": true,
+      "order": 1
+    },
+    {
+      "id": "cfbc5184-b3f2-4c42-bbc7-fb95b16c6b85",
+      "platform": "LinkedIn",
+      "url": "https://www.linkedin.com/in/shravan-kapare",
+      "visible": true,
+      "order": 2
+    },
+    {
+      "id": "f4a689c3-d657-49f5-9cad-5e83497023b1",
+      "platform": "Email",
+      "url": "mailto:shravankapare2004@gmail.com",
+      "visible": true,
+      "order": 3
+    },
+    {
+      "id": "bd36d76b-c2f2-47be-b570-f0f72da003b0",
+      "platform": "Instagram",
+      "url": "https://www.instagram.com/shravan_kapare",
+      "visible": true,
+      "order": 4
+    },
+    {
+      "id": "b26fa156-ef88-40b3-8fd6-0a1b275274bd",
+      "platform": "LeetCode",
+      "url": "https://leetcode.com/u/shravan_kapare/",
+      "visible": true,
+      "order": 5
+    },
+    {
+      "id": "3a0596fe-043b-47c4-9290-77c963a2e8fa",
+      "platform": "GeeksforGeeks",
+      "url": "https://www.geeksforgeeks.org/profile/shravanka4ap7",
+      "visible": true,
+      "order": 6
+    }
+  ]
+}

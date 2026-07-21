@@ -12,6 +12,7 @@ interface Repo {
   stargazers_count: number;
   forks_count: number;
   language: string;
+  updated_at?: string;
 }
 
 const langColors: Record<string, string> = {
@@ -177,7 +178,7 @@ export default function GithubSection({
                     </div>
 
                     <p className="text-sm text-gray-500 line-clamp-2 min-h-[40px] leading-relaxed">
-                      {repo.description || "No description provided."}
+                      {repo.description || "No description available."}
                     </p>
 
                     <div className="flex items-center gap-5 mt-5 pt-4 border-t border-white/[0.04] text-xs text-gray-600">
@@ -199,6 +200,11 @@ export default function GithubSection({
                       <span className="flex items-center gap-1 group-hover:text-blue-400/80 transition-colors">
                         <GitFork className="w-3.5 h-3.5" /> {repo.forks_count}
                       </span>
+                      {repo.updated_at && (
+                        <span className="ml-auto text-gray-600 truncate max-w-[80px]">
+                          {new Date(repo.updated_at).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </a>
@@ -217,7 +223,7 @@ export default function GithubSection({
             className="flex items-center gap-2 px-6 py-3 bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] hover:border-purple-500/20 rounded-full text-xs font-medium transition-all duration-300 text-gray-400 hover:text-white uppercase tracking-wider"
           >
             <Activity className="w-3.5 h-3.5" />
-            View Full Contribution Matrix
+            View all on GitHub
           </a>
         </div>
       </AnimatedSection>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Plus, Edit2, Trash2, X, Upload, Loader2, Image as ImageIcon, AlertTriangle } from "lucide-react";
+import { parseCollectionData } from "@/lib/cms-utils";
 
 type FieldType = "text" | "textarea" | "number" | "boolean" | "list" | "image";
 
@@ -156,13 +157,23 @@ export default function CrudTable({ endpoint, title, fields }: CrudTableProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<any>({});
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const fetchData = async () => {
     setLoading(true);
-    const res = await fetch(endpoint);
-    const result = await res.json();
-    setData(Array.isArray(result) ? result : []);
-    setLoading(false);
+    setFetchError(null);
+    try {
+      const res = await fetch(endpoint);
+      const result = await res.json();
+      const parsedItems = parseCollectionData(result);
+      setData(parsedItems);
+    } catch (err: any) {
+      console.error("Failed to parse collection data:", err);
+      setFetchError(err.message || "Failed to load data.");
+      setData([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -325,7 +336,15 @@ export default function CrudTable({ endpoint, title, fields }: CrudTableProps) {
         </button>
       </div>
 
-      {loading ? (
+      {fetchError ? (
+        <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-6 rounded-xl flex items-center gap-3">
+          <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+          <div>
+            <p className="font-medium text-sm">Data Synchronization Error</p>
+            <p className="text-xs opacity-80 mt-1">{fetchError}</p>
+          </div>
+        </div>
+      ) : loading ? (
         <div className="flex items-center gap-3 text-gray-400">
           <Loader2 className="w-4 h-4 animate-spin" /> Loading data...
         </div>

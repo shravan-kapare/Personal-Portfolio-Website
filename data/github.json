@@ -1,30 +1,11 @@
 {
-  "repos": [
-    {
-      "id": "R_kgDOPasJcA",
-      "name": "llm-insurance-assistant2",
-      "status": "Hidden",
-      "pinned": true,
-      "sortOrder": 999,
-      "customDescription": "",
-      "customCategory": "",
-      "customThumbnail": ""
-    },
-    {
-      "id": "R_kgDOPaerwQ",
-      "name": "llm-insurance-assistant",
-      "status": "Normal",
-      "pinned": true,
-      "sortOrder": 999,
-      "customDescription": "",
-      "customCategory": "",
-      "customThumbnail": ""
-    }
-  ],
-  "updatedAt": "2026-07-21T05:26:17.871Z",
-  "meta": {
-    "sectionBadge": "OPEN SOURCE CORE",
-    "sectionTitle": "Open Source Core",
-    "sectionSubtitle": "Manage visibility, features, and descriptions for your GitHub repositories."
-  }
-}
+  "mode": "automatic",
+  "username": "shravan-kapare",
+  "sortBy": "updated",
+  "displayLimit": 6,
+  "ignoreArchived": true,
+  "ignoreForks": true,
+  "showPrivate": false,
+  "cacheDuration": 3600,
+  "overrides": []
+}

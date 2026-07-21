@@ -14,31 +14,111 @@ export default function SectionHeaderEditor({ sectionId }: SectionHeaderEditorPr
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    fetch("/api/collection/sections")
-      .then((res) => res.json())
-      .then((sections) => {
-        const sec = sections.find((s: any) => s.id === sectionId);
-        if (sec) {
+    const collections = ["skills", "projects", "education", "achievements", "certifications", "social"];
+    const singletons = ["hero", "about", "github", "evolution"];
+
+    if (collections.includes(sectionId)) {
+      fetch(`/api/collection/${sectionId}`)
+        .then((res) => res.json())
+        .then((resData) => {
+          if (resData && resData.meta) {
+            setData({
+              badge: resData.meta.sectionBadge || "",
+              name: resData.meta.sectionTitle || "",
+              subtitle: resData.meta.sectionSubtitle || "",
+            });
+          }
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    } else if (singletons.includes(sectionId)) {
+      fetch(`/api/singleton/${sectionId}`)
+        .then((res) => res.json())
+        .then((resData) => {
+          const meta = resData.meta || resData;
           setData({
-            badge: sec.badge || "",
-            name: sec.name || "",
-            subtitle: sec.subtitle || "",
+            badge: meta.sectionBadge || meta.sectionLabel || "",
+            name: meta.sectionTitle || meta.sectionName || "",
+            subtitle: meta.sectionSubtitle || meta.heading || "",
           });
-        }
-        setLoading(false);
-      });
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    } else {
+      fetch("/api/collection/sections")
+        .then((res) => res.json())
+        .then((sections) => {
+          const sec = sections.find((s: any) => s.id === sectionId);
+          if (sec) {
+            setData({
+              badge: sec.badge || "",
+              name: sec.name || "",
+              subtitle: sec.subtitle || "",
+            });
+          }
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    }
   }, [sectionId]);
 
   const handleSave = async () => {
     setSaving(true);
     setSuccess(false);
     try {
-      const res = await fetch(`/api/collection/sections/${sectionId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (res.ok) {
+      const collections = ["skills", "projects", "education", "achievements", "certifications", "social"];
+      const singletons = ["hero", "about", "github", "evolution"];
+
+      let res;
+      if (collections.includes(sectionId)) {
+        res = await fetch(`/api/collection/${sectionId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            meta: {
+              sectionBadge: data.badge,
+              sectionTitle: data.name,
+              sectionSubtitle: data.subtitle,
+            }
+          }),
+        });
+      } else if (singletons.includes(sectionId)) {
+        const getRes = await fetch(`/api/singleton/${sectionId}`);
+        const existing = await getRes.json();
+        
+        let bodyToSave;
+        if (sectionId === "about") {
+          bodyToSave = {
+            ...existing,
+            sectionBadge: data.badge,
+            sectionTitle: data.name,
+            sectionSubtitle: data.subtitle,
+          };
+        } else {
+          bodyToSave = {
+            ...existing,
+            meta: {
+              sectionBadge: data.badge,
+              sectionTitle: data.name,
+              sectionSubtitle: data.subtitle,
+            }
+          };
+        }
+
+        res = await fetch(`/api/singleton/${sectionId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(bodyToSave),
+        });
+      } else {
+        res = await fetch(`/api/collection/sections/${sectionId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+      }
+
+      if (res && res.ok) {
         setSuccess(true);
         setTimeout(() => setSuccess(false), 3000);
       }

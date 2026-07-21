@@ -13,15 +13,23 @@ export async function PUT(req: Request, { params }: { params: Promise<{ type: st
     if (!ALLOWED_TYPES.includes(type)) return NextResponse.json({ error: "Invalid type" }, { status: 400 });
 
     const body = await req.json();
-    const data = await readData<any[]>(`${type}.json`);
+    let data = await readData<any>(`${type}.json`);
     
-    const index = data.findIndex(item => item.id === id);
+    let items = Array.isArray(data) ? data : (data?.items || []);
+    const index = items.findIndex((item: any) => item.id === id);
     if (index === -1) return NextResponse.json({ error: "Not found" }, { status: 404 });
     
-    data[index] = { ...data[index], ...body, updatedAt: new Date().toISOString() };
+    items[index] = { ...items[index], ...body, updatedAt: new Date().toISOString() };
+    
+    if (Array.isArray(data)) {
+      data = items;
+    } else {
+      data.items = items;
+    }
+    
     await writeData(`${type}.json`, data);
     
-    return NextResponse.json(data[index]);
+    return NextResponse.json(items[index]);
   } catch (err) {
     return NextResponse.json({ error: "Failed to update" }, { status: 500 });
   }
@@ -35,12 +43,19 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ type:
     const { type, id } = await params;
     if (!ALLOWED_TYPES.includes(type)) return NextResponse.json({ error: "Invalid type" }, { status: 400 });
 
-    let data = await readData<any[]>(`${type}.json`);
+    let data = await readData<any>(`${type}.json`);
     
-    const initialLength = data.length;
-    data = data.filter(item => item.id !== id);
+    let items = Array.isArray(data) ? data : (data?.items || []);
+    const initialLength = items.length;
+    items = items.filter((item: any) => item.id !== id);
     
-    if (data.length === initialLength) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (items.length === initialLength) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    
+    if (Array.isArray(data)) {
+      data = items;
+    } else {
+      data.items = items;
+    }
     
     await writeData(`${type}.json`, data);
     return NextResponse.json({ success: true });

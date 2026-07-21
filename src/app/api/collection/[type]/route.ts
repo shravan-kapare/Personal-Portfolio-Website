@@ -25,7 +25,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ type: s
     if (!ALLOWED_TYPES.includes(type)) return NextResponse.json({ error: "Invalid type" }, { status: 400 });
 
     const body = await req.json();
-    const data = await readData<any[]>(`${type}.json`);
+    let data = await readData<any>(`${type}.json`);
     
     const newItem = {
       ...body,
@@ -33,7 +33,15 @@ export async function POST(req: Request, { params }: { params: Promise<{ type: s
       createdAt: new Date().toISOString()
     };
     
-    data.push(newItem);
+    if (Array.isArray(data)) {
+      data.push(newItem);
+    } else if (data && typeof data === 'object' && Array.isArray(data.items)) {
+      data.items.push(newItem);
+    } else {
+      // Fallback
+      data = { meta: {}, items: [newItem] };
+    }
+    
     await writeData(`${type}.json`, data);
 
     // Auto-generate timeline events when enabled
@@ -96,3 +104,37 @@ export async function POST(req: Request, { params }: { params: Promise<{ type: s
     return NextResponse.json({ error: "Failed to create" }, { status: 500 });
   }
 }
+
+export async function PUT(req: Request, { params }: { params: Promise<{ type: string }> }) {
+  const isAuth = await verifyApiAuth(req as any);
+  if (!isAuth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  try {
+    const { type } = await params;
+    if (!ALLOWED_TYPES.includes(type)) return NextResponse.json({ error: "Invalid type" }, { status: 400 });
+
+    const body = await req.json();
+    let data = await readData<any>(`${type}.json`);
+    
+    if (body.meta) {
+      data.meta = {
+        ...data.meta,
+        ...body.meta,
+      };
+    } else {
+      // Direct update of the whole object
+      data = {
+        ...data,
+        ...body,
+      };
+    }
+    
+    data.updatedAt = new Date().toISOString();
+    await writeData(`${type}.json`, data);
+    
+    return NextResponse.json(data);
+  } catch (err) {
+    return NextResponse.json({ error: "Failed to update metadata" }, { status: 500 });
+  }
+}
+

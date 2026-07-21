@@ -25,7 +25,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ type: st
     if (!ALLOWED_TYPES.includes(type)) return NextResponse.json({ error: "Invalid type" }, { status: 400 });
 
     const body = await req.json();
-    const data = { ...body, updatedAt: new Date().toISOString() };
+    const existing = await readData<any>(`${type}.json`).catch(() => ({}));
+    const data = { ...existing, ...body, updatedAt: new Date().toISOString() };
     
     await writeData(`${type}.json`, data);
     

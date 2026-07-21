@@ -71,7 +71,7 @@ const quickLinks = [
   { name: "Contact", href: "#contact" },
 ];
 
-export default function Footer() {
+export default function Footer({ socialData }: { socialData?: any }) {
   // Use a static year for SSR, update to real year on client mount
   const [currentYear, setCurrentYear] = useState(2026);
 
@@ -131,17 +131,19 @@ export default function Footer() {
               Connect
             </h4>
             <div className="flex gap-3">
-              {socialLinks.map((link) => {
-                const Icon = link.icon;
+              {(socialData?.items || socialLinks).filter((l: any) => l.visible !== false).map((link: any) => {
+                // Find matching local icon config by name, fallback to a default
+                const localConfig = socialLinks.find(sl => sl.name.toLowerCase() === link.platform?.toLowerCase() || sl.name.toLowerCase() === link.name?.toLowerCase());
+                const Icon = localConfig?.icon || ExternalLink;
                 return (
                   <a
-                    key={link.name}
-                    href={link.href}
+                    key={link.id || link.name || link.platform}
+                    href={link.url || link.href}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 hover:border-purple-500/30 transition-all group"
-                    aria-label={link.name}
-                    title={link.tooltip || link.name}
+                    aria-label={link.platform || link.name}
+                    title={link.platform || link.name}
                   >
                     <Icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
                   </a>
@@ -149,15 +151,27 @@ export default function Footer() {
               })}
             </div>
 
-            <a
-              href="/resume.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-purple-400 transition-colors mt-2"
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-              Download Resume
-            </a>
+            {socialData?.meta?.resumeLink ? (
+              <a
+                href={socialData.meta.resumeLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-purple-400 transition-colors mt-2"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                Download Resume
+              </a>
+            ) : (
+              <a
+                href="/resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-purple-400 transition-colors mt-2"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                Download Resume
+              </a>
+            )}
           </div>
         </div>
 

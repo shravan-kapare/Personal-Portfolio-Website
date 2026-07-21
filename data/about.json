@@ -1,13 +1,43 @@
 {
-  "sectionLabel": "About",
-  "sectionTitle": "About Me",
-  "heading": "Architecting the Future",
-  "paragraphs": [
-    "I am Shravan Kapare, a Computer Science Engineering student passionate about Artificial Intelligence, backend development, and intelligent automation.",
-    "I enjoy building software that solves practical problems using Python, Generative AI, and modern backend technologies. My interests range from LLM-powered assistants and automation systems to scalable web applications and real-world engineering solutions.",
-    "I continuously learn by building projects, participating in hackathons, and exploring emerging technologies that can create meaningful impact."
-  ],
-  "updatedAt": "2026-07-21T05:05:50.968Z",
-  "sectionBadge": "ABOUT",
-  "sectionSubtitle": "A glimpse into my background and passions."
+  "title": "About Me",
+  "subtitle": "My background and journey",
+  "description": "I am a Computer Science Engineering student passionate about Artificial Intelligence and Automation. My technical journey revolves around Python, Machine Learning, and Cloud Computing, with a strong focus on building real-world software solutions. I continuously explore emerging technologies, from LLMs to Augmented Reality, striving to develop intelligent applications that solve practical problems.",
+  "stats": [
+    {
+      "id": "c0ac0989-ba02-46b6-afa6-120d05e43415",
+      "label": "Role",
+      "value": "Computer Science Engineering Student",
+      "icon": "User"
+    },
+    {
+      "id": "401d2c1e-4730-4ab1-9cb8-e82dee2a2a7d",
+      "label": "Degree",
+      "value": "B.Tech in CSE",
+      "icon": "BookOpen"
+    },
+    {
+      "id": "06ad6d44-209a-46d8-8279-af417999d8e2",
+      "label": "CGPA",
+      "value": "8.90",
+      "icon": "Award"
+    },
+    {
+      "id": "f165ce95-8f28-443d-849c-3c3f022c7154",
+      "label": "Graduation",
+      "value": "2027",
+      "icon": "Calendar"
+    },
+    {
+      "id": "ca8f649e-6d83-4df3-9051-ad05671bfbc9",
+      "label": "Location",
+      "value": "Maharashtra, India",
+      "icon": "MapPin"
+    },
+    {
+      "id": "fe714593-29ce-46ff-9737-2b7cbe761444",
+      "label": "Languages",
+      "value": "English, Hindi, Marathi",
+      "icon": "Globe"
+    }
+  ]
 }
