@@ -10,7 +10,7 @@
   "maxGithubRepos": 6,
   "connectHeading": "Let's Connect",
   "portfolioMode": "professional",
-  "showExperienceSelector": true,
+  "showExperienceSelector": false,
   "allowVisitorSwitching": true,
   "defaultExperience": "professional",
   "sectionVisibility": {
@@ -55,5 +55,5 @@
       "professional": true
     }
   },
-  "updatedAt": "2026-07-21T09:02:27.997Z"
+  "updatedAt": "2026-07-21T09:02:49.022Z"
 }
