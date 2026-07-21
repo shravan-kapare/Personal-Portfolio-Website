@@ -90,6 +90,17 @@
       "color": "blue",
       "visible": true,
       "order": 7
+    },
+    {
+      "id": "7761f01c-3fe6-4581-912c-a8b39aed3c0b",
+      "title": "Started learning GitHub",
+      "description": "Added GitHub to my skill repertoire.",
+      "date": "2026",
+      "icon": "Zap",
+      "category": "Skill Acquired",
+      "color": "blue",
+      "visible": true,
+      "order": 8
     }
   ]
 }
