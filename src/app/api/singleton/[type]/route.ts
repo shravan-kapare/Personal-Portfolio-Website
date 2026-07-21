@@ -32,6 +32,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ type: st
     
     return NextResponse.json(data);
   } catch (err) {
+    console.error(err);
     return NextResponse.json({ error: "Failed to update" }, { status: 500 });
   }
 }
