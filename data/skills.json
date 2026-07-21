@@ -13,6 +13,15 @@
       "description": "Primary programming language used for AI, backend development, automation, desktop applications, and software engineering projects.",
       "id": "b27e167a-b539-4b54-a4c4-2ecf59ebcf6f",
       "createdAt": "2026-07-21T05:09:41.797Z"
+    },
+    {
+      "name": "C++",
+      "category": "Languages",
+      "level": 82,
+      "icon": "Code2",
+      "description": "Used for object-oriented programming, data structures, algorithms, and system-level problem solving.",
+      "id": "1dc9587c-2605-4062-88ab-fdd975e49367",
+      "createdAt": "2026-07-21T05:10:11.725Z"
     }
   ]
 }
