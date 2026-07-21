@@ -2,5 +2,17 @@
   "sectionLabel": "Journey",
   "sectionTitle": "Knowledge Evolution",
   "sectionSubtitle": "",
-  "timelineEntries": []
+  "timelineEntries": [
+    {
+      "id": "3047d5eb-dbdf-4acf-a207-409cf58b7d15",
+      "title": "Started learning Python",
+      "description": "Added Python to my skill repertoire.",
+      "date": "2026",
+      "icon": "Zap",
+      "category": "Skill Acquired",
+      "color": "blue",
+      "visible": true,
+      "order": 0
+    }
+  ]
 }
