@@ -35,6 +35,17 @@
       "color": "blue",
       "visible": true,
       "order": 2
+    },
+    {
+      "id": "2da3232e-b3cf-4809-bc1b-b3fe8e0376db",
+      "title": "Started learning SQL",
+      "description": "Added SQL to my skill repertoire.",
+      "date": "2026",
+      "icon": "Zap",
+      "category": "Skill Acquired",
+      "color": "blue",
+      "visible": true,
+      "order": 3
     }
   ]
 }
