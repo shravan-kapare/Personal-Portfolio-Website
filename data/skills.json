@@ -6,18 +6,6 @@
   },
   "items": [
     {
-      "id": "3",
-      "name": "Machine Learning",
-      "category": "AI/ML",
-      "level": 80,
-      "orbitLayer": "Inner",
-      "color": "#f59e0b",
-      "visibility": true,
-      "icon": "brain",
-      "description": "Developing predictive models and neural networks.",
-      "createdAt": "2026-01-03T00:00:00Z"
-    },
-    {
       "id": "4",
       "name": "Unity",
       "category": "AR/VR",
