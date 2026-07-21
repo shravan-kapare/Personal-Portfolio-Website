@@ -13,6 +13,17 @@
       "color": "blue",
       "visible": true,
       "order": 0
+    },
+    {
+      "id": "90b5ffad-c0b1-4ef2-ba20-b86581886b55",
+      "title": "Started learning C++",
+      "description": "Added C++ to my skill repertoire.",
+      "date": "2026",
+      "icon": "Zap",
+      "category": "Skill Acquired",
+      "color": "blue",
+      "visible": true,
+      "order": 1
     }
   ]
 }
