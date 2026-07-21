@@ -6,18 +6,6 @@
   },
   "items": [
     {
-      "id": "2",
-      "name": "React",
-      "category": "Frontend",
-      "level": 85,
-      "orbitLayer": "Middle",
-      "color": "#a855f7",
-      "visibility": true,
-      "icon": "react",
-      "description": "Building interactive web applications.",
-      "createdAt": "2026-01-02T00:00:00Z"
-    },
-    {
       "id": "3",
       "name": "Machine Learning",
       "category": "AI/ML",
