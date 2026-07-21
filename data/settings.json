@@ -9,7 +9,7 @@
   "autoGenerateTimelineEvents": true,
   "maxGithubRepos": 6,
   "connectHeading": "Let's Connect",
-  "portfolioMode": "visitor-choice",
+  "portfolioMode": "professional",
   "showExperienceSelector": true,
   "allowVisitorSwitching": true,
   "defaultExperience": "professional",
@@ -55,5 +55,5 @@
       "professional": true
     }
   },
-  "updatedAt": "2026-07-21T05:27:26.692Z"
+  "updatedAt": "2026-07-21T09:02:27.997Z"
 }
