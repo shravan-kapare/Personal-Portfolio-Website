@@ -4,18 +4,5 @@
     "sectionTitle": "Skills Laboratory",
     "sectionSubtitle": "A visual map of my technical expertise."
   },
-  "items": [
-    {
-      "id": "4",
-      "name": "Unity",
-      "category": "AR/VR",
-      "level": 75,
-      "orbitLayer": "Outer",
-      "color": "#ec4899",
-      "visibility": true,
-      "icon": "unity",
-      "description": "Creating augmented reality experiences.",
-      "createdAt": "2026-01-04T00:00:00Z"
-    }
-  ]
+  "items": []
 }
