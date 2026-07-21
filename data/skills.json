@@ -67,6 +67,15 @@
       "description": "Building applications powered by Large Language Models for real-world problem solving.",
       "id": "00560846-79eb-401c-ba11-2d2c64b3816e",
       "createdAt": "2026-07-21T05:12:45.898Z"
+    },
+    {
+      "name": "Prompt Engineering",
+      "category": "AI/ML",
+      "level": 90,
+      "icon": "Sparkles",
+      "description": "Designing structured prompts for reliable and efficient AI interactions.",
+      "id": "607dd13c-8ff9-4175-b028-200aba240ffc",
+      "createdAt": "2026-07-21T05:13:11.207Z"
     }
   ]
 }
