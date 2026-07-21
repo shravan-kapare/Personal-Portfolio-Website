@@ -24,6 +24,17 @@
       "color": "blue",
       "visible": true,
       "order": 1
+    },
+    {
+      "id": "0cda3bb5-28ca-418c-b324-37c9c3125f3a",
+      "title": "Started learning C",
+      "description": "Added C to my skill repertoire.",
+      "date": "2026",
+      "icon": "Zap",
+      "category": "Skill Acquired",
+      "color": "blue",
+      "visible": true,
+      "order": 2
     }
   ]
 }
