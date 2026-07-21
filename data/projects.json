@@ -1,36 +1,25 @@
-[
-  {
-    "id": "1",
-    "name": "AR Campus Navigation",
-    "description": "An augmented reality mobile application to navigate the university campus.",
-    "technologies": [
-      "Unity",
-      "AR Foundation",
-      "C#"
-    ],
-    "githubUrl": "https://github.com/shravankapare",
-    "demoUrl": "",
-    "screenshots": [],
-    "category": "AR/VR",
-    "featured": true,
-    "createdAt": "2026-01-01T00:00:00Z"
+{
+  "meta": {
+    "sectionBadge": "WORK",
+    "sectionTitle": "Innovation Command Center",
+    "sectionSubtitle": "A showcase of projects and technical solutions."
   },
-  {
-    "name": "se",
-    "category": "xdgfds",
-    "description": "sdfsdg",
-    "longDescription": "xfdgd",
-    "technologies": [
-      "fgdgdrh",
-      "rdt"
-    ],
-    "featured": false,
-    "image": "",
-    "architectureDiagram": "",
-    "themeColor": "",
-    "githubUrl": "",
-    "demoUrl": "",
-    "id": "50af09e0-cef7-46a7-9547-cc062dbcd96a",
-    "createdAt": "2026-06-16T16:55:47.075Z"
-  }
-]
+  "items": [
+    {
+      "id": "1",
+      "name": "AR Campus Navigation",
+      "description": "An augmented reality mobile application to navigate the university campus.",
+      "technologies": [
+        "Unity",
+        "AR Foundation",
+        "C#"
+      ],
+      "githubUrl": "https://github.com/shravankapare",
+      "demoUrl": "",
+      "screenshots": [],
+      "category": "AR/VR",
+      "featured": true,
+      "createdAt": "2026-01-01T00:00:00Z"
+    }
+  ]
+}
