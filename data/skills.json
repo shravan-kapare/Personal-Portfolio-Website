@@ -76,6 +76,15 @@
       "description": "Designing structured prompts for reliable and efficient AI interactions.",
       "id": "607dd13c-8ff9-4175-b028-200aba240ffc",
       "createdAt": "2026-07-21T05:13:11.207Z"
+    },
+    {
+      "name": "GitHub",
+      "category": "Tools",
+      "level": 90,
+      "icon": "Github",
+      "description": "Repository management, collaboration, and open-source development.",
+      "id": "e57e11e3-6ab2-4962-a8ea-f6ca73e4ebf3",
+      "createdAt": "2026-07-21T05:13:51.799Z"
     }
   ]
 }
