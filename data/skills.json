@@ -1,50 +1,45 @@
-[
-  {
-    "id": "1",
-    "name": "Python",
-    "category": "Languages",
-    "level": 90,
-    "orbitLayer": "Outer",
-    "color": "#3b82f6",
-    "visibility": true,
-    "icon": "python",
-    "description": "Used for AI/ML and backend development.",
-    "createdAt": "2026-01-01T00:00:00Z"
+{
+  "meta": {
+    "sectionBadge": "EXPERTISE",
+    "sectionTitle": "Skills Laboratory",
+    "sectionSubtitle": "A visual map of my technical expertise."
   },
-  {
-    "id": "2",
-    "name": "React",
-    "category": "Frontend",
-    "level": 85,
-    "orbitLayer": "Middle",
-    "color": "#a855f7",
-    "visibility": true,
-    "icon": "react",
-    "description": "Building interactive web applications.",
-    "createdAt": "2026-01-02T00:00:00Z"
-  },
-  {
-    "id": "3",
-    "name": "Machine Learning",
-    "category": "AI/ML",
-    "level": 80,
-    "orbitLayer": "Inner",
-    "color": "#f59e0b",
-    "visibility": true,
-    "icon": "brain",
-    "description": "Developing predictive models and neural networks.",
-    "createdAt": "2026-01-03T00:00:00Z"
-  },
-  {
-    "id": "4",
-    "name": "Unity",
-    "category": "AR/VR",
-    "level": 75,
-    "orbitLayer": "Outer",
-    "color": "#ec4899",
-    "visibility": true,
-    "icon": "unity",
-    "description": "Creating augmented reality experiences.",
-    "createdAt": "2026-01-04T00:00:00Z"
-  }
-]
+  "items": [
+    {
+      "id": "2",
+      "name": "React",
+      "category": "Frontend",
+      "level": 85,
+      "orbitLayer": "Middle",
+      "color": "#a855f7",
+      "visibility": true,
+      "icon": "react",
+      "description": "Building interactive web applications.",
+      "createdAt": "2026-01-02T00:00:00Z"
+    },
+    {
+      "id": "3",
+      "name": "Machine Learning",
+      "category": "AI/ML",
+      "level": 80,
+      "orbitLayer": "Inner",
+      "color": "#f59e0b",
+      "visibility": true,
+      "icon": "brain",
+      "description": "Developing predictive models and neural networks.",
+      "createdAt": "2026-01-03T00:00:00Z"
+    },
+    {
+      "id": "4",
+      "name": "Unity",
+      "category": "AR/VR",
+      "level": 75,
+      "orbitLayer": "Outer",
+      "color": "#ec4899",
+      "visibility": true,
+      "icon": "unity",
+      "description": "Creating augmented reality experiences.",
+      "createdAt": "2026-01-04T00:00:00Z"
+    }
+  ]
+}
