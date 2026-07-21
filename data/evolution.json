@@ -79,6 +79,17 @@
       "color": "blue",
       "visible": true,
       "order": 6
+    },
+    {
+      "id": "fe480511-4ded-4da4-8f08-8e2aced5a1f2",
+      "title": "Started learning Prompt Engineering",
+      "description": "Added Prompt Engineering to my skill repertoire.",
+      "date": "2026",
+      "icon": "Zap",
+      "category": "Skill Acquired",
+      "color": "blue",
+      "visible": true,
+      "order": 7
     }
   ]
 }
