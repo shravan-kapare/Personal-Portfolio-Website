@@ -57,6 +57,17 @@
       "color": "blue",
       "visible": true,
       "order": 4
+    },
+    {
+      "id": "466da3cb-810d-4ff6-bcbe-72c23e6e9973",
+      "title": "Started learning Generative AI",
+      "description": "Added Generative AI to my skill repertoire.",
+      "date": "2026",
+      "icon": "Zap",
+      "category": "Skill Acquired",
+      "color": "blue",
+      "visible": true,
+      "order": 5
     }
   ]
 }
