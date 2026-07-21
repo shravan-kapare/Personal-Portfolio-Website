@@ -31,6 +31,15 @@
       "description": "Used for programming fundamentals, memory management, and operating system concepts.",
       "id": "324177dc-2961-44e2-8e6e-06f9499ed69c",
       "createdAt": "2026-07-21T05:10:45.619Z"
+    },
+    {
+      "name": "SQL",
+      "category": "Databases",
+      "level": 80,
+      "icon": "Database",
+      "description": "Writing queries, relational database design, and backend data management.",
+      "id": "932cf2ee-495c-4428-918a-eb2b5e5a550d",
+      "createdAt": "2026-07-21T05:11:24.806Z"
     }
   ]
 }
