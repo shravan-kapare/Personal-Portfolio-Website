@@ -68,6 +68,17 @@
       "color": "blue",
       "visible": true,
       "order": 5
+    },
+    {
+      "id": "f3597ecf-2219-4a49-8872-b01a04b6dc6e",
+      "title": "Started learning LLMs",
+      "description": "Added LLMs to my skill repertoire.",
+      "date": "2026",
+      "icon": "Zap",
+      "category": "Skill Acquired",
+      "color": "blue",
+      "visible": true,
+      "order": 6
     }
   ]
 }
