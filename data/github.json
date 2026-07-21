@@ -3,7 +3,7 @@
     {
       "id": "R_kgDOPasJcA",
       "name": "llm-insurance-assistant2",
-      "status": "Normal",
+      "status": "Hidden",
       "pinned": true,
       "sortOrder": 999,
       "customDescription": "",
@@ -21,5 +21,10 @@
       "customThumbnail": ""
     }
   ],
-  "updatedAt": "2026-06-17T16:21:49.180Z"
+  "updatedAt": "2026-07-21T05:26:17.871Z",
+  "meta": {
+    "sectionBadge": "OPEN SOURCE CORE",
+    "sectionTitle": "Open Source Core",
+    "sectionSubtitle": "Manage visibility, features, and descriptions for your GitHub repositories."
+  }
 }
