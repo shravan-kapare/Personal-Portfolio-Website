@@ -46,6 +46,17 @@
       "color": "blue",
       "visible": true,
       "order": 3
+    },
+    {
+      "id": "a728af92-46e9-4668-81c9-092e40b1457c",
+      "title": "Started learning Flask",
+      "description": "Added Flask to my skill repertoire.",
+      "date": "2026",
+      "icon": "Zap",
+      "category": "Skill Acquired",
+      "color": "blue",
+      "visible": true,
+      "order": 4
     }
   ]
 }
