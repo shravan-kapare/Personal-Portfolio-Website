@@ -58,6 +58,15 @@
       "description": "Developing intelligent applications using Large Language Models and modern AI workflows.",
       "id": "12220645-c65c-4527-b4fb-21381fd3208b",
       "createdAt": "2026-07-21T05:12:19.843Z"
+    },
+    {
+      "name": "LLMs",
+      "category": "AI/ML",
+      "level": 90,
+      "icon": "Bot",
+      "description": "Building applications powered by Large Language Models for real-world problem solving.",
+      "id": "00560846-79eb-401c-ba11-2d2c64b3816e",
+      "createdAt": "2026-07-21T05:12:45.898Z"
     }
   ]
 }
