@@ -22,6 +22,15 @@
       "description": "Used for object-oriented programming, data structures, algorithms, and system-level problem solving.",
       "id": "1dc9587c-2605-4062-88ab-fdd975e49367",
       "createdAt": "2026-07-21T05:10:11.725Z"
+    },
+    {
+      "name": "C",
+      "category": "Languages",
+      "level": 80,
+      "icon": "Terminal",
+      "description": "Used for programming fundamentals, memory management, and operating system concepts.",
+      "id": "324177dc-2961-44e2-8e6e-06f9499ed69c",
+      "createdAt": "2026-07-21T05:10:45.619Z"
     }
   ]
 }
