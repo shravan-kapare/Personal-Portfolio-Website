@@ -4,5 +4,15 @@
     "sectionTitle": "Skills Laboratory",
     "sectionSubtitle": "A visual map of my technical expertise."
   },
-  "items": []
+  "items": [
+    {
+      "name": "Python",
+      "category": "Languages",
+      "level": 90,
+      "icon": "Laptop",
+      "description": "Primary programming language used for AI, backend development, automation, desktop applications, and software engineering projects.",
+      "id": "b27e167a-b539-4b54-a4c4-2ecf59ebcf6f",
+      "createdAt": "2026-07-21T05:09:41.797Z"
+    }
+  ]
 }
