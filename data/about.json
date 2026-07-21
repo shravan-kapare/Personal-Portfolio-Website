@@ -3,8 +3,11 @@
   "sectionTitle": "About Me",
   "heading": "Architecting the Future",
   "paragraphs": [
-    "I am Shravan Kapare, a Computer Science Engineering student obsessed with pushing the boundaries of what is possible with emerging technologies.",
-    "My focus lies at the intersection of Artificial Intelligence, Augmented Reality, and Cloud Computing. I believe that the next generation of digital experiences will not just be viewed—they will be inhabited."
+    "I am Shravan Kapare, a Computer Science Engineering student passionate about Artificial Intelligence, backend development, and intelligent automation.",
+    "I enjoy building software that solves practical problems using Python, Generative AI, and modern backend technologies. My interests range from LLM-powered assistants and automation systems to scalable web applications and real-world engineering solutions.",
+    "I continuously learn by building projects, participating in hackathons, and exploring emerging technologies that can create meaningful impact."
   ],
-  "updatedAt": "2026-01-01T00:00:00Z"
+  "updatedAt": "2026-07-21T05:05:50.968Z",
+  "sectionBadge": "ABOUT",
+  "sectionSubtitle": "A glimpse into my background and passions."
 }
