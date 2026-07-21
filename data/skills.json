@@ -40,6 +40,15 @@
       "description": "Writing queries, relational database design, and backend data management.",
       "id": "932cf2ee-495c-4428-918a-eb2b5e5a550d",
       "createdAt": "2026-07-21T05:11:24.806Z"
+    },
+    {
+      "name": "Flask",
+      "category": "Backend",
+      "level": 90,
+      "icon": "Server",
+      "description": "Building REST APIs and scalable backend services for AI and web applications.",
+      "id": "239a4fcf-d6ee-4642-9964-a01bc527b30d",
+      "createdAt": "2026-07-21T05:11:51.485Z"
     }
   ]
 }
