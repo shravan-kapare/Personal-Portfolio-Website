@@ -9,5 +9,51 @@
   "autoGenerateTimelineEvents": true,
   "maxGithubRepos": 6,
   "connectHeading": "Let's Connect",
-  "updatedAt": "2026-06-17T15:46:48.575Z"
+  "portfolioMode": "visitor-choice",
+  "showExperienceSelector": true,
+  "allowVisitorSwitching": true,
+  "defaultExperience": "professional",
+  "sectionVisibility": {
+    "home": {
+      "cosmic": true,
+      "professional": true
+    },
+    "about": {
+      "cosmic": true,
+      "professional": true
+    },
+    "skills": {
+      "cosmic": true,
+      "professional": true
+    },
+    "projects": {
+      "cosmic": true,
+      "professional": true
+    },
+    "education": {
+      "cosmic": true,
+      "professional": true
+    },
+    "achievements": {
+      "cosmic": true,
+      "professional": true
+    },
+    "certifications": {
+      "cosmic": true,
+      "professional": true
+    },
+    "evolution": {
+      "cosmic": true,
+      "professional": true
+    },
+    "github": {
+      "cosmic": true,
+      "professional": true
+    },
+    "contact": {
+      "cosmic": true,
+      "professional": true
+    }
+  },
+  "updatedAt": "2026-07-21T05:27:26.692Z"
 }
