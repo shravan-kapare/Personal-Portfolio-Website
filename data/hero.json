@@ -1,13 +1,15 @@
 {
   "portfolioYear": "2026",
   "portfolioLabel": "Portfolio",
-  "mainName": "Shravan\nKapare.",
-  "subtitle": "Architecting the Future",
+  "mainName": "Shravan Kapare",
+  "subtitle": "Building AI-powered software and automation solutions that solve real-world engineering problems.",
   "tags": [
-    "AR Developer",
+    "AI Developer",
     "ML Enthusiast",
-    "IoT Innovator"
+    "Automation Engineer",
+    "Python Developer"
   ],
   "description": "Welcome to my digital space. I build immersive experiences bridging reality and computation.",
-  "updatedAt": "2026-06-17T00:00:00Z"
+  "updatedAt": "2026-07-21T05:04:25.377Z",
+  "tagline": "Architecting the Future"
 }
