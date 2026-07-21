@@ -49,6 +49,15 @@
       "description": "Building REST APIs and scalable backend services for AI and web applications.",
       "id": "239a4fcf-d6ee-4642-9964-a01bc527b30d",
       "createdAt": "2026-07-21T05:11:51.485Z"
+    },
+    {
+      "name": "Generative AI",
+      "category": "AI/ML",
+      "level": 90,
+      "icon": "Brain",
+      "description": "Developing intelligent applications using Large Language Models and modern AI workflows.",
+      "id": "12220645-c65c-4527-b4fb-21381fd3208b",
+      "createdAt": "2026-07-21T05:12:19.843Z"
     }
   ]
 }
